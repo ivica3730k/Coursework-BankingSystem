@@ -1,5 +1,6 @@
 #pragma once
 #include "sqlite3.h"
+#include "fmt-master/format.h"
 using std::string;
 
 class database
@@ -11,5 +12,6 @@ public:
 	
 private:
 	sqlite3 *db;
+	static int callback(void *NotUsed, int argc, char **argv, char **azColName);
 };
 

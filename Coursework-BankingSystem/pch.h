@@ -10,10 +10,12 @@
 #define PCH_H
 
 // TODO: add headers that you want to pre-compile here
+#pragma once
 #include <iostream>
 #include <string>
 #include "picosha2.h"
 #include "database.h"
 #include "sqlite3.h"
+
 
 #endif //PCH_H
