@@ -13,7 +13,6 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include "picosha2.h"
 #include "database.h"
 #include "sqlite3.h"
 
