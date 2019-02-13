@@ -11,13 +11,16 @@
 
 // TODO: add headers that you want to pre-compile here
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <string>
+#include <chrono>
+#include <ctime>  
 #include "database.h"
 #include "sqlite3.h"
-#include "auth.h"
 #include "picosha2.h"
 #include "fmt-master/format.h"
+#include "testClass.h"
 
 
 #endif //PCH_H

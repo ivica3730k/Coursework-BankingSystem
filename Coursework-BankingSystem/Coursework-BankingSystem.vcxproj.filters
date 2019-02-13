@@ -24,9 +24,6 @@
     <ClInclude Include="fmt-master\format.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="auth.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -39,9 +36,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="fmt-master\format.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="auth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

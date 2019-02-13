@@ -22,11 +22,20 @@ public:
 	database(const char *path);
 	bool createUser(string* name, string* surname, string * eMail,string * password,bool isAdmin);
 	dbUserData checkUser(string * email);
+	dbUserData checkUserTest(string * email);
 	
 private:
 	sqlite3 *db =nullptr;
-	static int callbackUsers(void *dataptr, int argc, char **argv, char **azColName);
+	bool executeQuery(string * _query, int(*f)(void *, int , char **, char **), void* data);
+	bool executeQuery(string * _query, int(*f)(void *, int, char **, char **));
+	bool setLastLogin(string* email);
+	string returnTime(void);
+	string hash(string * data);
 	
+	//callbacks
+	static int callbackUsers(void *dataptr, int argc, char **argv, char **azColName);
+	static int noCallback(void *dataptr, int argc, char **argv, char **azColName);
+
 	
 };
 
