@@ -27,19 +27,12 @@ bool database::createUser(string* name, string* surname, string* eMail, string* 
 
 dbUserData database::checkUser(string* email)
 {
-	char* zErrMsg = 0;
-	int rc = 0;
-	char* sql = nullptr;
 
 	dbUserData dataread;
 	dbUserData* data = &dataread;
 	std::string _query = fmt::format("SELECT * from users where eMail = '{0}';", *email);
-
-	const char* query = _query.c_str();
-
-	rc = sqlite3_exec(db, query, callbackUsers, (void*)data, &zErrMsg);
-
-	if (rc) {
+	bool rc = executeQuery(&_query, callbackUsers, (void*)data);
+	if (rc == false) {
 
 		dataread.isValid = false;
 	}
@@ -49,23 +42,28 @@ dbUserData database::checkUser(string* email)
 	return dataread;
 }
 
-dbUserData database::checkUserTest(string* email)
+bool database::loginUser(string* email, string* password)
 {
+	dbUserData data;
+	data = checkUser(email);
 
-	dbUserData dataread;
-	dbUserData* data = &dataread;
-	std::string _query = fmt::format("SELECT * from users where eMail = '{0}';", *email);
-
-	bool rc = executeQuery(&_query, callbackUsers, (void*)data);
-
-	if (rc == false) {
-
-		dataread.isValid = false;
+	if (data.isValid == true) {
+		//std::cout << data.password << std::endl;
+		//std::cout << hash(password) << std::endl;
+		if (data.password == hash(password)) {
+			setLastLogin(email);
+			std::cout << "Login Succesfull" << std::endl;
+			return (true);
+		}
+		else {
+			std::cout << "Wrong password" << std::endl;
+			return (false);
+		}
 	}
 	else {
+		std::cout << "User with this eMail address does not exist in database!" << std::endl;
+		return (false);
 	}
-
-	return dataread;
 }
 
 int database::callbackUsers(void* dataptr, int argc, char** argv, char** azColName)
@@ -84,9 +82,13 @@ int database::callbackUsers(void* dataptr, int argc, char** argv, char** azColNa
 
 int database::noCallback(void* dataptr, int argc, char** argv, char** azColName)
 {
+	int i;
+	for (i = 0; i < argc; i++) {
+		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+	}
+	printf("\n");
 	return 0;
 }
-
 
 bool database::executeQuery(string* _query, int(*f)(void*, int, char**, char**), void* data)
 {
@@ -116,18 +118,21 @@ bool database::executeQuery(string* _query, int(*f)(void*, int, char**, char**))
 	rc = sqlite3_exec(db, query, f, 0, &zErrMsg);
 
 	if (rc) {
-		return (false);
+		//fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+		return (0);
 	}
 	else {
-
-		return (true);
+		//fprintf(stdout, "Opened database successfully\n");
 	}
-	return false;
+
+	return (1);
 }
 
 bool database::setLastLogin(string* email)
 {
-	return (false);
+	std::string query = fmt::format("UPDATE `users` SET `lastLogin`= '{0}' WHERE eMail = '{1}';", returnTime(), *email);
+	//std::cout << query;
+	return (executeQuery(&query, noCallback));
 }
 
 string database::returnTime(void)

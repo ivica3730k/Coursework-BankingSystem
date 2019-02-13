@@ -22,7 +22,7 @@ public:
 	database(const char *path);
 	bool createUser(string* name, string* surname, string * eMail,string * password,bool isAdmin);
 	dbUserData checkUser(string * email);
-	dbUserData checkUserTest(string * email);
+	bool loginUser(string* email, string*password);
 	
 private:
 	sqlite3 *db =nullptr;
