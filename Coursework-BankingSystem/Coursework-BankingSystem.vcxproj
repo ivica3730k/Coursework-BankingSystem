@@ -158,11 +158,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="auth.h" />
     <ClInclude Include="database.h" />
     <ClInclude Include="fmt-master\format.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="auth.cpp" />
     <ClCompile Include="Coursework-BankingSystem.cpp" />
     <ClCompile Include="database.cpp" />
     <ClCompile Include="fmt-master\format.cc" />

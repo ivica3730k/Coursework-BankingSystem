@@ -15,6 +15,9 @@
 #include <string>
 #include "database.h"
 #include "sqlite3.h"
+#include "auth.h"
+#include "picosha2.h"
+#include "fmt-master/format.h"
 
 
 #endif //PCH_H

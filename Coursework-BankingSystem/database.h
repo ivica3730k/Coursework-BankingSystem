@@ -1,7 +1,6 @@
 #pragma once
+#include "pch.h"
 #include "sqlite3.h"
-#include "fmt-master/format.h"
-#include "picosha2.h"
 using std::string;
 
 
@@ -23,11 +22,11 @@ public:
 	database(const char *path);
 	bool createUser(string* name, string* surname, string * eMail,string * password,bool isAdmin);
 	dbUserData checkUser(string * email);
+	
 private:
-	sqlite3 *db;
-	string hash(string* data);
+	sqlite3 *db =nullptr;
 	static int callbackUsers(void *dataptr, int argc, char **argv, char **azColName);
-	char* data[];
+	
 	
 };
 
