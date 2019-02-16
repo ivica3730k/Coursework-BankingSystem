@@ -1,13 +1,12 @@
 #include "pch.h"
 #include "user.h"
 
-
-user:: user(database &_db)
+user::user(database& _db)
 {
 	db = &_db;
 }
 
-bool user:: add(void)
+bool user::add(void)
 {
 	string name;
 	string surname;
@@ -25,7 +24,7 @@ bool user:: add(void)
 	//cin >> email;
 	getline(std::cin, email);
 	std::transform(email.begin(), email.end(), email.begin(), ::tolower);
-	cout<< "\nInput user password,user can change later: ";
+	cout << "\nInput user password,user can change later: ";
 	//cin >> email;
 	getline(std::cin, password);
 
@@ -53,27 +52,25 @@ bool user:: add(void)
 		admin = true;
 	}
 
-	return(db->createUser(&name, &surname, &email, &password, admin));
-
-	
+	return (db->createUser(&name, &surname, &email, &password, admin));
 }
 
-bool user::add(string * name, string * surname, string * eMail, string * password, bool isAdmin)
+bool user::add(string* name, string* surname, string* eMail, string* password, bool isAdmin)
 {
 	string pass = *password;
 	if (pass.length() < 8)
 		return false;
-	return(db->createUser(name, surname, eMail, &pass, isAdmin));
+	return (db->createUser(name, surname, eMail, &pass, isAdmin));
 }
 
-bool user::add(const char *name, const char *surname, const char * eMail, const char * password, bool isAdmin)
+bool user::add(const char* name, const char* surname, const char* eMail, const char* password, bool isAdmin)
 {
 	string _name(name);
 	string _surname(surname);
 	string _email(eMail);
 	string _password(password);
 	bool Admin = isAdmin;
-	return(db->createUser(&_name, &_surname, &_email, &_password, Admin));
+	return (db->createUser(&_name, &_surname, &_email, &_password, Admin));
 }
 
 bool user::del(void)
@@ -83,13 +80,41 @@ bool user::del(void)
 	getline(std::cin, mail);
 	std::transform(mail.begin(), mail.end(), mail.begin(), ::tolower);
 	bool exec = db->deleteUser(&mail);
-	return(false);
+	return (false);
 }
 
-bool user::del(string * email)
+bool user::del(string* email)
 {
 	string _email = *email;
 	std::transform(_email.begin(), _email.end(), _email.begin(), ::tolower);
 	bool exec = db->deleteUser(email);
 	return (exec);
+}
+
+bool user::listAll(void)
+{
+	std::vector<string> userData;
+	bool exec = db->listAllUsers(&userData);
+	if (exec) {
+		VariadicTable<std::string, std::string, std::string> vt({ "Name", "Surname", "EMail" });
+
+		std::vector<string>::iterator i;
+
+		for (i = userData.begin(); i < userData.end(); ++i) {
+
+			std::string name = *i;
+			++i;
+			std::string surname = *i;
+			++i;
+			std::string email = *i;
+
+			vt.addRow({ name, surname, email });
+		}
+
+		vt.print(std::cout);
+	}
+	else {
+		std::cout << "Failed creating table!" << std::endl;
+	}
+	return exec;
 }

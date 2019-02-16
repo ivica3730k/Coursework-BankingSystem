@@ -7,8 +7,17 @@ using std::endl;
 
 int main()
 {
+	database db("database.db"); //create instance of database type db
+	user user(db); //and assign it to user class of user
+
+	user.listAll();
+	
 
 	
+	return 0;
+	
+
+	/*
 	database db("database.db"); //create instance of database type db
 	user user(db); //and assign it to user class of user
 	string name = "test1";
@@ -20,7 +29,7 @@ int main()
 	user.add(&name, &surname,&email,&password,isAd);
 
 	user.del();
-	
+	*/
 	return(1);
   
 }

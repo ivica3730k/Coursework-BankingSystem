@@ -24,7 +24,7 @@ public:
 	bool deleteUser(string* email);
 	dbUserData checkUser(string * email);
 	bool loginUser(string* email, string*password);
-	bool listAllUsers(void);
+	bool listAllUsers(std::vector<string> *a);
 	
 private:
 	sqlite3 *db =nullptr;
@@ -37,6 +37,7 @@ private:
 	//callbacks
 	static int callbackUsers(void *dataptr, int argc, char **argv, char **azColName);
 	static int noCallback(void *dataptr, int argc, char **argv, char **azColName);
+	static int callbackListAllUsers(void* dataptr, int argc, char** argv, char** azColName);
 
 	
 };

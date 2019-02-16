@@ -72,8 +72,30 @@ bool database::loginUser(string* email, string* password)
 	}
 }
 
+bool database::listAllUsers(std::vector<string> *a)
+{
+	
+	std::string query = "SELECT name ,surname,eMail FROM users;";
+	bool exec = executeQuery(&query, callbackListAllUsers,(void*)a);
+	return exec;
+	
+}
+
+int database::callbackListAllUsers(void* dataptr, int argc, char** argv, char** azColName)
+{
+
+	std::vector<string>* store = &*(std::vector<string>*)dataptr;
+	store->push_back(argv[0]);
+	store->push_back(argv[1]);
+	store->push_back(argv[2]);
+	return 0;
+
+}
+
+
 int database::callbackUsers(void* dataptr, int argc, char** argv, char** azColName)
 {
+
 
 	dbUserData* store = &*(dbUserData*)dataptr;
 	store->isValid = true;
