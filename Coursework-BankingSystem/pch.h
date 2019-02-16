@@ -16,11 +16,12 @@
 #include <string>
 #include <chrono>
 #include <ctime>  
+#include <algorithm>
 #include "database.h"
 #include "sqlite3.h"
 #include "picosha2.h"
 #include "fmt-master/format.h"
-#include "testClass.h"
+#include "user.h"
 
 
 #endif //PCH_H
