@@ -25,6 +25,12 @@ bool database::createUser(string* name, string* surname, string* eMail, string* 
 	return (false);
 }
 
+bool database::deleteUser(string * email)
+{
+	string query = fmt::format("DELETE from users where eMail = '{0}';", *email);
+	return executeQuery(&query, noCallback);
+}
+
 dbUserData database::checkUser(string* email)
 {
 

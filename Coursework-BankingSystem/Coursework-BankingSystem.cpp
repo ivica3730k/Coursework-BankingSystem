@@ -7,23 +7,20 @@ using std::endl;
 
 int main()
 {
+
+	
 	database db("database.db"); //create instance of database type db
 	user user(db); //and assign it to user class of user
-
-	user.add();
-
-	
-	
-	/*
 	string name = "test1";
 	string surname = "user1";
 	string password = "12345678";
 	string email = "email.com";
 	bool isAd = false;
 	//cout << db.checkUser(&email).name << endl;
-	//db.createUser(&name, &surname,&email,&password,isAd);
-	std::cout<<db.loginUser(&email, &password);
-	*/
+	user.add(&name, &surname,&email,&password,isAd);
+
+	user.del();
+	
 	return(1);
   
 }

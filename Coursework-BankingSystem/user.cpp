@@ -76,5 +76,20 @@ bool user::add(const char *name, const char *surname, const char * eMail, const 
 	return(db->createUser(&_name, &_surname, &_email, &_password, Admin));
 }
 
+bool user::del(void)
+{
+	cout << "Input email of the user you want to delete:";
+	string mail;
+	getline(std::cin, mail);
+	std::transform(mail.begin(), mail.end(), mail.begin(), ::tolower);
+	bool exec = db->deleteUser(&mail);
+	return(false);
+}
 
-
+bool user::del(string * email)
+{
+	string _email = *email;
+	std::transform(_email.begin(), _email.end(), _email.begin(), ::tolower);
+	bool exec = db->deleteUser(email);
+	return (exec);
+}

@@ -21,8 +21,10 @@ class database
 public:
 	database(const char *path);
 	bool createUser(string* name, string* surname, string * eMail,string * password,bool isAdmin);
+	bool deleteUser(string* email);
 	dbUserData checkUser(string * email);
 	bool loginUser(string* email, string*password);
+	bool listAllUsers(void);
 	
 private:
 	sqlite3 *db =nullptr;
