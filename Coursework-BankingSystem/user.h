@@ -5,20 +5,23 @@ using std::cin;
 using std::string;
 using std::endl;
 using std::getline;
+
+
+
 class user
 {
 public:
 	user(database &_db);
 	//User only specific functions********
-	bool login(void);
-	bool login(string* email, string* password);
-	bool login(const char* email, const char* password);
+	bool login(UserData &data);
+	bool login(string* email, string* password,UserData &data);
+	bool login(const char* email, const char* password, UserData &data);
 	bool logout(void);
 	bool changePass(string* oldpass, string*newpass, string *email);
 
 	//Data export functions**********
-	dbUserData listInfo(void);
-	dbUserData listInfo(string *email);
+	UserData listInfo(void);
+	UserData listInfo(string *email);
 
 	//Data export to file functions***
 	bool printOut(void);

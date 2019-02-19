@@ -5,7 +5,7 @@ using std::string;
 
 
 
-struct dbUserData {
+struct UserData {
 	bool isValid = 0;
 	string name;
 	string surname;
@@ -22,8 +22,8 @@ public:
 	database(const char *path);
 	bool createUser(string* name, string* surname, string * eMail,string * password,bool isAdmin);
 	bool deleteUser(string* email);
-	dbUserData checkUser(string * email);
-	bool loginUser(string* email, string*password);
+	UserData checkUser(string * email);
+	bool loginUser(string* email, string*password, UserData &_data);
 	bool listAllUsers(std::vector<string> *a);
 	
 private:

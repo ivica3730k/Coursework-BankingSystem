@@ -21,7 +21,7 @@ bool database::createUser(string* name, string* surname, string* eMail, string* 
 			return (true);
 		}
 	}
-	std::cout << "User probably already exists" << std::endl;
+	std::cout << "DATABASE: User probably already exists" << std::endl;
 	return (false);
 }
 
@@ -31,11 +31,11 @@ bool database::deleteUser(string * email)
 	return executeQuery(&query, noCallback);
 }
 
-dbUserData database::checkUser(string* email)
+UserData database::checkUser(string* email)
 {
 
-	dbUserData dataread;
-	dbUserData* data = &dataread;
+	UserData dataread;
+	UserData* data = &dataread;
 	std::string _query = fmt::format("SELECT * from users where eMail = '{0}';", *email);
 	bool rc = executeQuery(&_query, callbackUsers, (void*)data);
 	if (rc == false) {
@@ -48,26 +48,28 @@ dbUserData database::checkUser(string* email)
 	return dataread;
 }
 
-bool database::loginUser(string* email, string* password)
+bool database::loginUser(string* email, string* password, UserData &_data)
 {
-	dbUserData data;
+	UserData data;
 	data = checkUser(email);
+	_data = data;
 
 	if (data.isValid == true) {
 		//std::cout << data.password << std::endl;
 		//std::cout << hash(password) << std::endl;
 		if (data.password == hash(password)) {
 			setLastLogin(email);
-			std::cout << "Login Succesfull" << std::endl;
+			std::cout << "DATABASE: Login Succesfull" << std::endl;
+			cout << "Last login " << data.lastLogin << endl;
 			return (true);
 		}
 		else {
-			std::cout << "Wrong password" << std::endl;
+			std::cout << "DATABASE: Wrong password" << std::endl;
 			return (false);
 		}
 	}
 	else {
-		std::cout << "User with this eMail address does not exist in database!" << std::endl;
+		std::cout << "DATABASE: User with this eMail address does not exist in database!" << std::endl;
 		return (false);
 	}
 }
@@ -97,7 +99,7 @@ int database::callbackUsers(void* dataptr, int argc, char** argv, char** azColNa
 {
 
 
-	dbUserData* store = &*(dbUserData*)dataptr;
+	UserData* store = &*(UserData*)dataptr;
 	store->isValid = true;
 	store->name = argv[1];
 	store->surname = argv[2];

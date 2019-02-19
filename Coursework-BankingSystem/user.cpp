@@ -6,6 +6,25 @@ user::user(database& _db)
 	db = &_db;
 }
 
+bool user::login(UserData &data)
+{
+	std::string email;
+	std::string pass;
+
+	std::cout << "Enter User eMail: ";
+	getline(std::cin, email);
+
+	std::cout << "\nEnter user password: ";
+	getline(std::cin, pass);
+
+	return db->loginUser(&email,&pass,data);
+}
+
+bool user::login(string * email, string * password, UserData &data)
+{
+	return db->loginUser(email,password,data);
+}
+
 bool user::add(void)
 {
 	string name;
