@@ -88,7 +88,7 @@ bool database::listAllUsers(std::vector<string> *a)
 	
 }
 
-bool database::updateUserDetails(string * email, additionalData data)
+bool database::updateUserDetails(string * email, additionalData &data)
 {
 	std::string query = fmt::format("UPDATE `users` SET `title`='{0}', `nationality` = '{1}', `dateOfBirth` = '{2}', `placeOfBirth` = '{3}', `address` = '{4}', `phonenum` = '{5}' WHERE eMail = '{6}';",data.title,data.nationality,data.dateOfBirth,data.placeOfBirth,data.address,data.phonenum,*email);
 	bool exec = executeQuery(&query, noCallback);

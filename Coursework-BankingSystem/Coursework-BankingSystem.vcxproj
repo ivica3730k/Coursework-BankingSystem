@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="database.h" />
     <ClInclude Include="fmt-master\format.h" />
+    <ClInclude Include="menu.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="user.h" />
   </ItemGroup>
@@ -167,6 +168,7 @@
     <ClCompile Include="Coursework-BankingSystem.cpp" />
     <ClCompile Include="database.cpp" />
     <ClCompile Include="fmt-master\format.cc" />
+    <ClCompile Include="menu.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

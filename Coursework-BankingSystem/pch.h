@@ -21,9 +21,11 @@
 #include "variadicTable/include/VariadicTable.h"
 #include "database.h"
 #include "user.h"
+#include "menu.h"
 #include "sqlite3.h"
 #include "picosha2.h"
 #include "fmt-master/format.h"
+
 
 
 

@@ -7,11 +7,6 @@ using std::endl;
 using std::getline;
 
 
-namespace menu {
-
-	int adminMenu(void);
-	void completeData(additionalData &data);
-};
 
 
 class user
@@ -22,7 +17,7 @@ public:
 	bool login(UserData &data);
 	bool login(string* email, string* password,UserData &data);
 	bool login(const char* email, const char* password, UserData &data);
-	void getAditionalInfo(string *email);
+	bool writeAdditionalInfo(string *email, additionalData data);
 	bool logout(void);
 	bool changePass(string* oldpass, string*newpass, string *email);
 

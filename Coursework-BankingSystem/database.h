@@ -34,7 +34,7 @@ public:
 	UserData checkUser(string * email);
 	bool loginUser(string* email, string*password, UserData &_data);
 	bool listAllUsers(std::vector<string> *a);
-	bool updateUserDetails(string* email, additionalData data);
+	bool updateUserDetails(string* email, additionalData &data);
 	
 private:
 	sqlite3 *db =nullptr;
