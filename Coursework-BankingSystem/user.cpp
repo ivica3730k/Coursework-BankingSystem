@@ -159,7 +159,7 @@ void menu::completeData(additionalData& data)
 	std::transform(data.title.begin(), data.title.end(), data.title.begin(), ::tolower);
 	data.title[0] = toupper(data.title[0]);
 
-	while (data.title != "Mr" && data.title != "Mrs" && data.title != "Ms" && data.title != "Ms") {
+	while (data.title != "Mr" && data.title != "Mrs" && data.title != "Ms" && data.title != "Miss") {
 		cout << "\nWrong input,try again!" << endl;
 		cout << "Input your Title, Mr., Mrs., Ms. and Miss: ";
 		
