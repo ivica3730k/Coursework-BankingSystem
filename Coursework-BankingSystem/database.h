@@ -4,16 +4,25 @@
 using std::string;
 
 
+struct additionalData {
+	string title;
+	string nationality;
+	string dateOfBirth;
+	string placeOfBirth;
+	string address;
+	string phonenum;
+};
 
-struct UserData {
+class UserData {
+public:
 	bool isValid = 0;
 	string name;
 	string surname;
 	string email;
 	string password;
-	bool isAdmin;
+	string isAdmin;
 	string lastLogin;
-	
+	void clear(void);
 
 };
 class database
@@ -25,6 +34,7 @@ public:
 	UserData checkUser(string * email);
 	bool loginUser(string* email, string*password, UserData &_data);
 	bool listAllUsers(std::vector<string> *a);
+	bool updateUserDetails(string* email, additionalData data);
 	
 private:
 	sqlite3 *db =nullptr;

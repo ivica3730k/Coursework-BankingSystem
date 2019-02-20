@@ -6,12 +6,15 @@ database::database(const char* path)
 }
 
 bool database::createUser(string* name, string* surname, string* eMail, string* password, bool isAdmin)
-{
+{	
+	string admin = "No";
+	if (isAdmin)
+		admin = "Yes";
 	bool exists = checkUser(eMail).isValid;
 	if (exists == false) {
 		char* zErrMsg = 0;
 		char* sql = nullptr;
-		std::string _query = fmt::format("INSERT INTO `users`(`name`,`surname`,`eMail`,`password`,`isAdmin`,`lastLogin`) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');", *(name), *(surname), *(eMail), hash(password), isAdmin, "Never");
+		std::string _query = fmt::format("INSERT INTO `users`(`name`,`surname`,`eMail`,`password`,`isAdmin`,`lastLogin`) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');", *(name), *(surname), *(eMail), hash(password), admin, "Never");
 		bool rc = executeQuery(&_query, noCallback);
 		if (rc) {
 			return (false);
@@ -53,12 +56,14 @@ bool database::loginUser(string* email, string* password, UserData &_data)
 	UserData data;
 	data = checkUser(email);
 	_data = data;
-
+	
 	if (data.isValid == true) {
 		//std::cout << data.password << std::endl;
 		//std::cout << hash(password) << std::endl;
 		if (data.password == hash(password)) {
-			setLastLogin(email);
+
+			if(data.lastLogin != "Never")
+				setLastLogin(email);
 			std::cout << "DATABASE: Login Succesfull" << std::endl;
 			cout << "Last login " << data.lastLogin << endl;
 			return (true);
@@ -83,6 +88,16 @@ bool database::listAllUsers(std::vector<string> *a)
 	
 }
 
+bool database::updateUserDetails(string * email, additionalData data)
+{
+	std::string query = fmt::format("UPDATE `users` SET `title`='{0}', `nationality` = '{1}', `dateOfBirth` = '{2}', `placeOfBirth` = '{3}', `address` = '{4}', `phonenum` = '{5}' WHERE eMail = '{6}';",data.title,data.nationality,data.dateOfBirth,data.placeOfBirth,data.address,data.phonenum,*email);
+	bool exec = executeQuery(&query, noCallback);
+
+	if (exec)
+		return(setLastLogin(email));
+	return false;
+}
+
 int database::callbackListAllUsers(void* dataptr, int argc, char** argv, char** azColName)
 {
 
@@ -105,7 +120,7 @@ int database::callbackUsers(void* dataptr, int argc, char** argv, char** azColNa
 	store->surname = argv[2];
 	store->email = argv[3];
 	store->password = argv[4];
-	store->isAdmin = (bool)argv[5];
+	store->isAdmin = argv[5];
 	store->lastLogin = argv[6];
 	return 0;
 }
@@ -182,4 +197,15 @@ string database::hash(string* data)
 	picosha2::hash256(src_str.begin(), src_str.end(), hash.begin(), hash.end());
 	std::string hex_str = picosha2::bytes_to_hex_string(hash.begin(), hash.end());
 	return (hex_str);
+}
+
+void UserData::clear(void)
+{
+	isValid = false;
+	name = "";
+	surname = "";
+	email = "";
+	password = "";
+	isAdmin = "";
+	lastLogin = "";
 }
