@@ -10,7 +10,7 @@ menu::menu(UserData *data, user &_user)
 	email = data->email;
 	name = data->name;
 	surname = data->surname;
-	lastLogin = data->lastLogin;
+	lastLogOut = data->lastLogOut;
 	isAdmin = data->isAdmin;
 	admin = false;
 
@@ -26,14 +26,16 @@ menu::~menu()
 
 int menu::display(void)
 {
+	if (lastLogOut == "Never")
+		completeData();
+
 	if (admin) {
-		if (lastLogin == "Never")
-			completeData();
+		
 		adminMenu();
 	}
 	else{
-		if (lastLogin == "Never")
-			completeData();
+		
+		completeData();
 	}
 
 	return(1);
@@ -53,32 +55,37 @@ void menu::adminMenu(void)
 		cout << "0. LogOut from system" << endl;
 		cout << "\nInput your choice: ";
 		cin >> choice;
+		while ((getchar()) != '\n');
 
 		
 
 		switch (choice) {
-		
+		case 2:
+			userset->add();
+			break;
 		case 4:
 			userset->listAll();
 			break;
 		case 5:
-			userset->checkByeMail(&userdata->email);
+			userset->checkByeMail(&email);
 			break;
 		}
-		cout << "Choice is: " << choice << endl;
-		/*Admin menu functions go here*/
+		
+	
 	} while (choice != 0);
 
-	
+	userset->logout(&email);
 }
 
 void menu::userMenu(void)
 {
 }
 
-void menu::completeData(void)
+bool menu::completeData(void)
 {
 	additionalData data;
+	cout << "It seams that you have never logged in before!" << endl;
+	cout << "Please complete aditional details in order to use system.\n" << endl;
 	cout << "Input your Title, Mr., Mrs., Ms. and Miss: ";
 
 	getline(std::cin, data.title);
@@ -143,4 +150,9 @@ void menu::completeData(void)
 	getline(std::cin, data.phonenum);
 
 	userset->writeAdditionalInfo(&email, data);
+
+	cout << "Now, please login again!" << endl;
+	userset->logout(&email);
+	return true;
+	
 }

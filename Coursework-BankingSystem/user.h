@@ -21,7 +21,7 @@ public:
 	bool checkByeMail(string*mail);
 
 	bool writeAdditionalInfo(string *email, additionalData data);
-	bool logout(void);
+	bool logout(string* email);
 	bool changePass(string* oldpass, string*newpass, string *email);
 
 	//Data export functions**********

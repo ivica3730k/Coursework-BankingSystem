@@ -9,12 +9,17 @@ int main()
 	database db("database.db"); //create instance of database type db
 	user user(db); //and assign it to user class of user
 
-	UserData data;
-	user.login(data);
+	do {
+		UserData data;
+		//add ability to exit or to log in again here
+		cout << "LogIN" << endl;
+		if (user.login(data)) {
+			menu menu(&data, user);
+			menu.display();
+			menu.~menu();
+		}
 
-	menu menu(&data, user);
-	menu.display();
-	menu.~menu();
+	} while (true);
 
 	return (1);
 }

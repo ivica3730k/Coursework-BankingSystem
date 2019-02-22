@@ -12,7 +12,7 @@ private:
 
 	void adminMenu(void);
 	void userMenu(void);
-	void completeData(void);
+	bool completeData(void);
 	
 	UserData *userdata;
 	user *userset;
@@ -21,7 +21,7 @@ private:
 	std::string email;
 	std::string isAdmin;
 	bool admin;
-	std::string lastLogin;
+	std::string lastLogOut;
 
 	
 };

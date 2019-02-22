@@ -30,13 +30,13 @@ bool user::checkByeMail(string * mail)
 	std::vector<string> data;
 	bool exec = db->checkAllDetails(mail, &data);
 	if (exec) {
-		/*VariadicTable<std::string, std::string, std::string, string, std::string, std::string, string, std::string, std::string, string> vt({ "name","surname","eMail","lastLogin","title","nationality","dateOfBirth","placeOfBirth","address","phoneNum" });
+		/*VariadicTable<std::string, std::string, std::string, string, std::string, std::string, string, std::string, std::string, string> vt({ "name","surname","eMail","lastLogOut","title","nationality","dateOfBirth","placeOfBirth","address","phoneNum" });
 		vt.addRow({data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9] });
 		vt.print(std::cout);*/
 
-		std::vector<std::string> fields = { "First Name","Surname","eMail","Last Login","Title","Nationality","Date Of Birth","Place Of Birth","Address","Phone number" };
+		std::vector<std::string> fields = { "First Name","Surname","eMail","Last LogOut","Title","Nationality","Date Of Birth","Place Of Birth","Address","Phone number" };
 
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 10; i++) {
 			std::cout << fields[i] << ": " << data[i] << endl;
 		}
 	}
@@ -45,6 +45,12 @@ bool user::checkByeMail(string * mail)
 bool user::writeAdditionalInfo(string * email, additionalData  data)
 {
 	return(db->updateUserDetails(email,data));
+}
+
+bool user::logout(string* email)
+{
+	db->setlastLogOut(email);
+	return true;
 }
 
 bool user::add(void)

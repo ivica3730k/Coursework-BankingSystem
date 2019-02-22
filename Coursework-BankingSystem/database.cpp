@@ -14,7 +14,7 @@ bool database::createUser(string* name, string* surname, string* eMail, string* 
 	if (exists == false) {
 		char* zErrMsg = 0;
 		char* sql = nullptr;
-		std::string _query = fmt::format("INSERT INTO `users`(`name`,`surname`,`eMail`,`password`,`isAdmin`,`lastLogin`) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');", *(name), *(surname), *(eMail), hash(password), admin, "Never");
+		std::string _query = fmt::format("INSERT INTO `users`(`name`,`surname`,`eMail`,`password`,`isAdmin`,`lastLogOut`) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');", *(name), *(surname), *(eMail), hash(password), admin, "Never");
 		bool rc = executeQuery(&_query, noCallback);
 		if (rc) {
 			return (false);
@@ -62,10 +62,10 @@ bool database::loginUser(string* email, string* password, UserData &_data)
 		//std::cout << hash(password) << std::endl;
 		if (data.password == hash(password)) {
 
-			if(data.lastLogin != "Never")
-				setLastLogin(email);
+			if(data.lastLogOut != "Never")
+				//setlastLogOut(email);
 			std::cout << "DATABASE: Login Succesfull" << std::endl;
-			cout << "Last login " << data.lastLogin << endl;
+			cout << "Last Logout " << data.lastLogOut << endl;
 			return (true);
 		}
 		else {
@@ -93,14 +93,12 @@ bool database::updateUserDetails(string * email, additionalData &data)
 	std::string query = fmt::format("UPDATE `users` SET `title`='{0}', `nationality` = '{1}', `dateOfBirth` = '{2}', `placeOfBirth` = '{3}', `address` = '{4}', `phonenum` = '{5}' WHERE eMail = '{6}';",data.title,data.nationality,data.dateOfBirth,data.placeOfBirth,data.address,data.phonenum,*email);
 	bool exec = executeQuery(&query, noCallback);
 
-	if (exec)
-		return(setLastLogin(email));
-	return false;
+	return(exec);
 }
 
 bool database::checkAllDetails(string * email, std::vector<std::string>* data)
 {
-	std::string query = fmt::format("SELECT name,surname,eMail,lastLogin,title,nationality,dateOfBirth,placeOfBirth,address,phoneNum FROM users where eMail = '{0}';", *email);
+	std::string query = fmt::format("SELECT name,surname,eMail,lastLogOut,title,nationality,dateOfBirth,placeOfBirth,address,phoneNum FROM users where eMail = '{0}';", *email);
 	return(executeQuery(&query, callbackCheckAllUserDetails, (void*)data));
 }
 
@@ -136,7 +134,7 @@ int database::callbackUsers(void* dataptr, int argc, char** argv, char** azColNa
 	store->email = argv[3];
 	store->password = argv[4];
 	store->isAdmin = argv[5];
-	store->lastLogin = argv[6];
+	store->lastLogOut = argv[6];
 	return 0;
 }
 
@@ -188,9 +186,9 @@ bool database::executeQuery(string* _query, int(*f)(void*, int, char**, char**))
 	return (1);
 }
 
-bool database::setLastLogin(string* email)
+bool database::setlastLogOut(string* email)
 {
-	std::string query = fmt::format("UPDATE `users` SET `lastLogin`= '{0}' WHERE eMail = '{1}';", returnTime(), *email);
+	std::string query = fmt::format("UPDATE `users` SET `lastLogOut`= '{0}' WHERE eMail = '{1}';", returnTime(), *email);
 	//std::cout << query;
 	return (executeQuery(&query, noCallback));
 }
@@ -222,5 +220,5 @@ void UserData::clear(void)
 	email = "";
 	password = "";
 	isAdmin = "";
-	lastLogin = "";
+	lastLogOut = "";
 }

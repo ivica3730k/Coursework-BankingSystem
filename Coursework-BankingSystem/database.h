@@ -21,7 +21,7 @@ public:
 	string email;
 	string password;
 	string isAdmin;
-	string lastLogin;
+	string lastLogOut;
 	void clear(void);
 
 };
@@ -35,13 +35,13 @@ public:
 	bool listAllUsers(std::vector<string> *a);
 	bool updateUserDetails(string* email, additionalData &data);
 	bool checkAllDetails(string* email, std::vector<std::string> *data);
+	bool setlastLogOut(string* email);
 	
 private:
 	UserData checkUser(string * email);
 	sqlite3 *db =nullptr;
 	bool executeQuery(string * _query, int(*f)(void *, int , char **, char **), void* data);
 	bool executeQuery(string * _query, int(*f)(void *, int, char **, char **));
-	bool setLastLogin(string* email);
 	string returnTime(void);
 	string hash(string * data);
 	
