@@ -17,6 +17,9 @@ public:
 	bool login(UserData &data);
 	bool login(string* email, string* password,UserData &data);
 	bool login(const char* email, const char* password, UserData &data);
+
+	bool checkByeMail(string*mail);
+
 	bool writeAdditionalInfo(string *email, additionalData data);
 	bool logout(void);
 	bool changePass(string* oldpass, string*newpass, string *email);

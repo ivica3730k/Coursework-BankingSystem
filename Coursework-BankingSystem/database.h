@@ -31,12 +31,13 @@ public:
 	database(const char *path);
 	bool createUser(string* name, string* surname, string * eMail,string * password,bool isAdmin);
 	bool deleteUser(string* email);
-	UserData checkUser(string * email);
 	bool loginUser(string* email, string*password, UserData &_data);
 	bool listAllUsers(std::vector<string> *a);
 	bool updateUserDetails(string* email, additionalData &data);
+	bool checkAllDetails(string* email, std::vector<std::string> *data);
 	
 private:
+	UserData checkUser(string * email);
 	sqlite3 *db =nullptr;
 	bool executeQuery(string * _query, int(*f)(void *, int , char **, char **), void* data);
 	bool executeQuery(string * _query, int(*f)(void *, int, char **, char **));
@@ -48,6 +49,7 @@ private:
 	static int callbackUsers(void *dataptr, int argc, char **argv, char **azColName);
 	static int noCallback(void *dataptr, int argc, char **argv, char **azColName);
 	static int callbackListAllUsers(void* dataptr, int argc, char** argv, char** azColName);
+	static int callbackCheckAllUserDetails(void* dataptr, int argc, char** argv, char** azColName);
 
 	
 };

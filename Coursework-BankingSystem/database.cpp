@@ -98,15 +98,30 @@ bool database::updateUserDetails(string * email, additionalData &data)
 	return false;
 }
 
+bool database::checkAllDetails(string * email, std::vector<std::string>* data)
+{
+	std::string query = fmt::format("SELECT name,surname,eMail,lastLogin,title,nationality,dateOfBirth,placeOfBirth,address,phoneNum FROM users where eMail = '{0}';", *email);
+	return(executeQuery(&query, callbackCheckAllUserDetails, (void*)data));
+}
+
 int database::callbackListAllUsers(void* dataptr, int argc, char** argv, char** azColName)
 {
 
-	std::vector<string>* store = &*(std::vector<string>*)dataptr;
+	std::vector<string>* store = (std::vector<string>*)dataptr;
 	store->push_back(argv[0]);
 	store->push_back(argv[1]);
 	store->push_back(argv[2]);
 	return 0;
 
+}
+
+int database::callbackCheckAllUserDetails(void * dataptr, int argc, char ** argv, char ** azColName)
+{
+	std::vector<string>* store = (std::vector<string>*)dataptr;
+	
+	for (int i = 0; i < argc; i++)
+		store->push_back(argv[i]);
+	return 0;
 }
 
 

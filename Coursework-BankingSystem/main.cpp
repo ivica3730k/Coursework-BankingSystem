@@ -14,6 +14,7 @@ int main()
 
 	menu menu(&data, user);
 	menu.display();
+	menu.~menu();
 
 	return (1);
 }

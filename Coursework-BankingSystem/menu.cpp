@@ -24,7 +24,7 @@ menu::~menu()
 {
 }
 
-void menu::display(void)
+int menu::display(void)
 {
 	if (admin) {
 		if (lastLogin == "Never")
@@ -35,16 +35,45 @@ void menu::display(void)
 		if (lastLogin == "Never")
 			completeData();
 	}
+
+	return(1);
 }
 
 void menu::adminMenu(void)
 {
-	cout << "1.Add user" << endl;
-	cout << "2.Remove user" << endl;
-	cout << "3.List all users" << endl;
-	cout << "4.Check user by eMail" << endl;
+	int choice = 0;
+	do{
+		cout << endl;
+		cout << endl;
+		cout << "1.Display user area" << endl;
+		cout << "2.Add user" << endl;
+		cout << "3.Remove user" << endl;
+		cout << "4.List all users" << endl;
+		cout << "5.Check user by eMail" << endl;
+		cout << "0. LogOut from system" << endl;
+		cout << "\nInput your choice: ";
+		cin >> choice;
+
+		
+
+		switch (choice) {
+		
+		case 4:
+			userset->listAll();
+			break;
+		case 5:
+			userset->checkByeMail(&userdata->email);
+			break;
+		}
+		cout << "Choice is: " << choice << endl;
+		/*Admin menu functions go here*/
+	} while (choice != 0);
 
 	
+}
+
+void menu::userMenu(void)
+{
 }
 
 void menu::completeData(void)

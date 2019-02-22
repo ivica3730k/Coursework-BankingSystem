@@ -5,10 +5,14 @@ class menu
 public:
 	menu(UserData *data,user &_user);
 	~menu();
-	void display(void);
-	void adminMenu(void);
-	void completeData(void);
+	int display(void);
+
+	
 private:
+
+	void adminMenu(void);
+	void userMenu(void);
+	void completeData(void);
 	
 	UserData *userdata;
 	user *userset;
@@ -18,5 +22,7 @@ private:
 	std::string isAdmin;
 	bool admin;
 	std::string lastLogin;
+
+	
 };
 
