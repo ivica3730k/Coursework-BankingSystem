@@ -13,8 +13,8 @@ struct additionalData {
 	string phonenum;
 };
 
-class UserData {
-public:
+struct UserData {
+
 	bool isValid = 0;
 	string name;
 	string surname;

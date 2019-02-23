@@ -8,15 +8,34 @@ int main()
 {
 	database db("database.db"); //create instance of database type db
 	user user(db); //and assign it to user class of user
+	cout << "Welcome to Virtual Currency trading platform!" << endl;
 
 	do {
-		UserData data;
-		//add ability to exit or to log in again here
-		cout << "LogIN" << endl;
-		if (user.login(data)) {
-			menu menu(&data, user);
-			menu.display();
-			menu.~menu();
+
+		cout << endl;
+		cout << "1.Login" << endl;
+		cout << "0.Exit";
+		cout << "\nPlease input your choice: ";
+		int choice = INT_MAX;
+		cin >> choice;
+		while ((getchar()) != '\n');
+		cout << endl;
+
+		if (choice == 1) {
+			UserData data;
+			if (user.login(data)) {
+				menu menu(&data, user);
+				menu.display();
+				menu.~menu();
+			}
+		}
+		else if (choice == 0) {
+			break;
+		}
+		else {
+			
+			
+			cout<< "\nWrong input,please try again!" << endl;
 		}
 
 	} while (true);

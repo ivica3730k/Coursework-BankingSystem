@@ -12,7 +12,9 @@ private:
 
 	void adminMenu(void);
 	void userMenu(void);
-	bool completeData(void);
+	void completeData(void);
+	void wait(void);
+	void clear(void);
 	
 	UserData *userdata;
 	user *userset;

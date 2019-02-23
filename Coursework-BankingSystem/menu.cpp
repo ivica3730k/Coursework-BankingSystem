@@ -26,8 +26,14 @@ menu::~menu()
 
 int menu::display(void)
 {
-	if (lastLogOut == "Never")
+	if (lastLogOut == "Never") {
 		completeData();
+		userset->logout(&email);
+		system("CLS");
+		cout << "Now, please login again!" << endl;
+		return(1);
+
+	}
 
 	if (admin) {
 		
@@ -35,7 +41,7 @@ int menu::display(void)
 	}
 	else{
 		
-		completeData();
+		userMenu();
 	}
 
 	return(1);
@@ -44,9 +50,9 @@ int menu::display(void)
 void menu::adminMenu(void)
 {
 	int choice = 0;
+	
 	do{
-		cout << endl;
-		cout << endl;
+		std::cout << std::endl;
 		cout << "1.Display user area" << endl;
 		cout << "2.Add user" << endl;
 		cout << "3.Remove user" << endl;
@@ -60,30 +66,53 @@ void menu::adminMenu(void)
 		
 
 		switch (choice) {
+
+		case 1:
+			userMenu();
+			break;
 		case 2:
+			clear();
 			userset->add();
+			//wait();
+			break;
+		case 3:
+			clear();
+			userset->listAll();
+			userset->del();
+			//wait();
 			break;
 		case 4:
+			clear();
 			userset->listAll();
+			//wait();
+			//clear();
 			break;
 		case 5:
-			userset->checkByeMail(&email);
+			clear();
+			userset->checkByeMail();
+			//wait();
+			//clear();
 			break;
 		}
 		
-	
+		wait();
+		clear();
 	} while (choice != 0);
 
 	userset->logout(&email);
+	system("CLS");
+	
 }
 
 void menu::userMenu(void)
 {
 }
 
-bool menu::completeData(void)
+void menu::completeData(void)
 {
 	additionalData data;
+	std::cout << std::endl;
+	system("CLS");
 	cout << "It seams that you have never logged in before!" << endl;
 	cout << "Please complete aditional details in order to use system.\n" << endl;
 	cout << "Input your Title, Mr., Mrs., Ms. and Miss: ";
@@ -136,23 +165,24 @@ bool menu::completeData(void)
 	while ((getchar()) != '\n');
 
 	data.dateOfBirth = fmt::format("{0}/{1}/{2}", day, month, year);
-
 	cout << "\nInput place of birth: ";
-
 	getline(std::cin, data.placeOfBirth);
-
 	cout << "\nInput your full Address: ";
-
 	getline(std::cin, data.address);
-
 	cout << "\nInput full phone number: ";
-
 	getline(std::cin, data.phonenum);
-
 	userset->writeAdditionalInfo(&email, data);
 
-	cout << "Now, please login again!" << endl;
-	userset->logout(&email);
-	return true;
 	
+}
+
+void menu::wait(void)
+{
+	std::cout << "\nPress any key to continue." << std::endl;
+	cin.get();
+}
+
+void menu::clear(void)
+{
+	system("CLS");
 }

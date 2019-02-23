@@ -5,6 +5,8 @@ database::database(const char* path)
 	sqlite3_open(path, &db);
 }
 
+
+
 bool database::createUser(string* name, string* surname, string* eMail, string* password, bool isAdmin)
 {	
 	string admin = "No";
@@ -30,13 +32,20 @@ bool database::createUser(string* name, string* surname, string* eMail, string* 
 
 bool database::deleteUser(string * email)
 {
-	string query = fmt::format("DELETE from users where eMail = '{0}';", *email);
-	return executeQuery(&query, noCallback);
+	if (checkUser(email).isValid) {
+		string query = fmt::format("DELETE from users where eMail = '{0}';", *email);
+		return executeQuery(&query, noCallback);
+	}
+	
+	else {
+		
+		return(false);
+	
+	}
 }
 
 UserData database::checkUser(string* email)
 {
-
 	UserData dataread;
 	UserData* data = &dataread;
 	std::string _query = fmt::format("SELECT * from users where eMail = '{0}';", *email);
@@ -47,7 +56,7 @@ UserData database::checkUser(string* email)
 	}
 	else {
 	}
-
+	
 	return dataread;
 }
 
@@ -58,12 +67,11 @@ bool database::loginUser(string* email, string* password, UserData &_data)
 	_data = data;
 	
 	if (data.isValid == true) {
-		//std::cout << data.password << std::endl;
-		//std::cout << hash(password) << std::endl;
+		
 		if (data.password == hash(password)) {
 
 			if(data.lastLogOut != "Never")
-				//setlastLogOut(email);
+				
 			std::cout << "DATABASE: Login Succesfull" << std::endl;
 			cout << "Last Logout " << data.lastLogOut << endl;
 			return (true);
@@ -73,6 +81,7 @@ bool database::loginUser(string* email, string* password, UserData &_data)
 			return (false);
 		}
 	}
+
 	else {
 		std::cout << "DATABASE: User with this eMail address does not exist in database!" << std::endl;
 		return (false);
@@ -98,25 +107,25 @@ bool database::updateUserDetails(string * email, additionalData &data)
 
 bool database::checkAllDetails(string * email, std::vector<std::string>* data)
 {
-	std::string query = fmt::format("SELECT name,surname,eMail,lastLogOut,title,nationality,dateOfBirth,placeOfBirth,address,phoneNum FROM users where eMail = '{0}';", *email);
-	return(executeQuery(&query, callbackCheckAllUserDetails, (void*)data));
+	if (checkUser(email).isValid) {
+		std::string query = fmt::format("SELECT name,surname,eMail,lastLogOut,title,nationality,dateOfBirth,placeOfBirth,address,phoneNum FROM users where eMail = '{0}';", *email);
+		return(executeQuery(&query, callbackCheckAllUserDetails, (void*)data));
+	}
+	return(false);	
 }
 
 int database::callbackListAllUsers(void* dataptr, int argc, char** argv, char** azColName)
 {
-
 	std::vector<string>* store = (std::vector<string>*)dataptr;
 	store->push_back(argv[0]);
 	store->push_back(argv[1]);
 	store->push_back(argv[2]);
 	return 0;
-
 }
 
 int database::callbackCheckAllUserDetails(void * dataptr, int argc, char ** argv, char ** azColName)
 {
 	std::vector<string>* store = (std::vector<string>*)dataptr;
-	
 	for (int i = 0; i < argc; i++)
 		store->push_back(argv[i]);
 	return 0;
@@ -125,7 +134,6 @@ int database::callbackCheckAllUserDetails(void * dataptr, int argc, char ** argv
 
 int database::callbackUsers(void* dataptr, int argc, char** argv, char** azColName)
 {
-
 
 	UserData* store = &*(UserData*)dataptr;
 	store->isValid = true;
@@ -176,11 +184,8 @@ bool database::executeQuery(string* _query, int(*f)(void*, int, char**, char**))
 	rc = sqlite3_exec(db, query, f, 0, &zErrMsg);
 
 	if (rc) {
-		//fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+		
 		return (0);
-	}
-	else {
-		//fprintf(stdout, "Opened database successfully\n");
 	}
 
 	return (1);
@@ -189,13 +194,11 @@ bool database::executeQuery(string* _query, int(*f)(void*, int, char**, char**))
 bool database::setlastLogOut(string* email)
 {
 	std::string query = fmt::format("UPDATE `users` SET `lastLogOut`= '{0}' WHERE eMail = '{1}';", returnTime(), *email);
-	//std::cout << query;
 	return (executeQuery(&query, noCallback));
 }
 
 string database::returnTime(void)
 {
-
 	auto end = std::chrono::system_clock::now();
 	std::time_t _time = std::chrono::system_clock::to_time_t(end);
 	string s = std::ctime(&_time);

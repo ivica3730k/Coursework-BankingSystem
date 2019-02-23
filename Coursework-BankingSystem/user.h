@@ -16,8 +16,9 @@ public:
 	//User only specific functions********
 	bool login(UserData &data);
 	bool login(string* email, string* password,UserData &data);
-	bool login(const char* email, const char* password, UserData &data);
+	//bool login(const char* email, const char* password, UserData &data);
 
+	bool checkByeMail(void);
 	bool checkByeMail(string*mail);
 
 	bool writeAdditionalInfo(string *email, additionalData data);
