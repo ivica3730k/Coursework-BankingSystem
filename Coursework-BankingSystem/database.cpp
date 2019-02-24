@@ -1,12 +1,11 @@
 #include "pch.h"
 #include "database.h"
+
 database::database(const char* path)
 {
 	sqlite3_open(path, &db);
 }
-
-
-
+//User specific database functions
 bool database::createUser(string* name, string* surname, string* eMail, string* password, bool isAdmin)
 {	
 	string admin = "No";
@@ -34,7 +33,11 @@ bool database::createUser(string* name, string* surname, string* eMail, string* 
 	std::cout << "DATABASE: User probably already exists" << std::endl;
 	return (false);
 }
-
+bool database::createUserBalance(string * email)
+{
+	std::string query = fmt::format("INSERT into balance ('eMail') VALUES ('{0}');", *email);
+	return(executeQuery(&query, noCallback));
+}
 bool database::deleteUser(string * email)
 {
 	if (checkUser(email).isValid) {
@@ -49,36 +52,19 @@ bool database::deleteUser(string * email)
 	
 	}
 }
-
-UserData database::checkUser(string* email)
-{
-	UserData dataread;
-	UserData* data = &dataread;
-	std::string _query = fmt::format("SELECT * from users where eMail = '{0}';", *email);
-	bool rc = executeQuery(&_query, callbackUsers, (void*)data);
-	if (rc == false) {
-
-		dataread.isValid = false;
-	}
-	else {
-	}
-	
-	return dataread;
-}
-
 bool database::loginUser(string* email, string* password, UserData &_data)
 {
 	UserData data;
 	data = checkUser(email);
 	_data = data;
-	
+
 	if (data.isValid == true) {
-		
+
 		if (data.password == hash(password)) {
 
-			if(data.lastLogOut != "Never")
-				
-			std::cout << "DATABASE: Login Succesfull" << std::endl;
+			if (data.lastLogOut != "Never")
+
+				std::cout << "DATABASE: Login Succesfull" << std::endl;
 			cout << "Last Logout " << data.lastLogOut << endl;
 			return (true);
 		}
@@ -93,126 +79,58 @@ bool database::loginUser(string* email, string* password, UserData &_data)
 		return (false);
 	}
 }
-
-bool database::listAllUsers(std::vector<string> *a)
+bool database::changePassword(string * email, string * oldpass, string * newpass)
 {
-	
-	std::string query = "SELECT name ,surname,eMail FROM users;";
-	bool exec = executeQuery(&query, callbackToVector,(void*)a);
-	return exec;
-	
-}
+	std::string query1 = fmt::format("SELECT password from users where eMail = '{0}';", *email);
+	std::string dbpass;
+	bool a = executeQuery(&query1, callbackOneString, (void*)&dbpass);
+	if (a) {
+		if (hash(oldpass) == dbpass) {
+			query1 = fmt::format("UPDATE 'users' set 'password' = '{0}' where email = '{1}';", hash(newpass), *email);
+			return(executeQuery(&query1, noCallback));
+		}
+	}
 
+	return false;
+
+
+}
+bool database::setlastLogOut(string* email)
+{
+	std::string query = fmt::format("UPDATE `users` SET `lastLogOut`= '{0}' WHERE eMail = '{1}';", returnTime(), *email);
+	return (executeQuery(&query, noCallback));
+}
 bool database::updateUserDetails(string * email, additionalData &data)
 {
-	std::string query = fmt::format("UPDATE `users` SET `title`='{0}', `nationality` = '{1}', `dateOfBirth` = '{2}', `placeOfBirth` = '{3}', `address` = '{4}', `phonenum` = '{5}' WHERE eMail = '{6}';",data.title,data.nationality,data.dateOfBirth,data.placeOfBirth,data.address,data.phonenum,*email);
+	std::string query = fmt::format("UPDATE `users` SET `title`='{0}', `nationality` = '{1}', `dateOfBirth` = '{2}', `placeOfBirth` = '{3}', `address` = '{4}', `phonenum` = '{5}' WHERE eMail = '{6}';", data.title, data.nationality, data.dateOfBirth, data.placeOfBirth, data.address, data.phonenum, *email);
 	bool exec = executeQuery(&query, noCallback);
 
 	return(exec);
 }
-
 bool database::checkAllDetails(string * email, std::vector<std::string>* data)
 {
 	if (checkUser(email).isValid) {
 		std::string query = fmt::format("SELECT name,surname,eMail,lastLogOut,title,nationality,dateOfBirth,placeOfBirth,address,phoneNum FROM users where eMail = '{0}';", *email);
 		return(executeQuery(&query, callbackToVector, (void*)data));
 	}
-	return(false);	
+	return(false);
 }
-
-
-
-int database::callbackCheckAllUserDetails(void * dataptr, int argc, char ** argv, char ** azColName)
-{
-	std::vector<string>* store = (std::vector<string>*)dataptr;
-	for (int i = 0; i < argc; i++)
-		store->push_back(argv[i]);
-	return 0;
-}
-
-int database::callbackToVector(void * dataptr, int argc, char ** argv, char ** azColName)
-{
-	std::vector<string>* store = (std::vector<string>*)dataptr;
-
-	for (int i = 0; i < argc; i++) {
-		store->push_back(argv[i]);
-	}
-	return 0;
-}
-
-
-int database::callbackUsers(void* dataptr, int argc, char** argv, char** azColName)
+bool database::listAllUsers(std::vector<string> *a)
 {
 
-	UserData* store = &*(UserData*)dataptr;
-	store->isValid = true;
-	store->name = argv[1];
-	store->surname = argv[2];
-	store->email = argv[3];
-	store->password = argv[4];
-	store->isAdmin = argv[5];
-	store->lastLogOut = argv[6];
-	return 0;
+	std::string query = "SELECT name ,surname,eMail FROM users;";
+	bool exec = executeQuery(&query, callbackToVector, (void*)a);
+	return exec;
+
 }
 
-int database::noCallback(void* dataptr, int argc, char** argv, char** azColName)
-{
-	int i;
-	for (i = 0; i < argc; i++) {
-		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-	}
-	printf("\n");
-	return 0;
-}
-
-bool database::executeQuery(string* _query, int(*f)(void*, int, char**, char**), void* data)
-{
-	char* zErrMsg = 0;
-	int rc = 0;
-	char* sql = nullptr;
-	std::string exec = *_query;
-	const char* query = exec.c_str();
-	rc = sqlite3_exec(db, query, f, data, &zErrMsg);
-
-	if (rc) {
-		return (false);
-	}
-	else {
-
-		return (true);
-	}
-}
-
-bool database::executeQuery(string* _query, int(*f)(void*, int, char**, char**))
-{
-	char* zErrMsg = 0;
-	int rc = 0;
-	char* sql = nullptr;
-	std::string exec = *_query;
-	const char* query = exec.c_str();
-	rc = sqlite3_exec(db, query, f, 0, &zErrMsg);
-
-	if (rc) {
-		
-		return (0);
-	}
-
-	return (1);
-}
-
-bool database::setlastLogOut(string* email)
-{
-	std::string query = fmt::format("UPDATE `users` SET `lastLogOut`= '{0}' WHERE eMail = '{1}';", returnTime(), *email);
-	return (executeQuery(&query, noCallback));
-}
-
+//Banking specific database functions
 bool database::checkCurrencies(std::vector <std::string> *currset)
 {
-	
+
 	std::string query = "SELECT currency,label FROM currencies;";
 	return(executeQuery(&query, callbackToVector, (void*)currset));
 }
-
 bool database::addCurrency(string * name, string * label)
 {
 	std::string testQuery = fmt::format("SELECT *  from currencies where currency = '{0}';", *name);
@@ -234,11 +152,27 @@ bool database::addCurrency(string * name, string * label)
 
 
 	cout << "This currency already is present in the system" << endl;
-	
+
 	return false;
-	
+
 }
 
+//"Helper" functions
+UserData database::checkUser(string* email)
+{
+	UserData dataread;
+	UserData* data = &dataread;
+	std::string _query = fmt::format("SELECT * from users where eMail = '{0}';", *email);
+	bool rc = executeQuery(&_query, callbackUsers, (void*)data);
+	if (rc == false) {
+
+		dataread.isValid = false;
+	}
+	else {
+	}
+	
+	return dataread;
+}
 string database::returnTime(void)
 {
 	auto end = std::chrono::system_clock::now();
@@ -246,7 +180,6 @@ string database::returnTime(void)
 	string s = std::ctime(&_time);
 	return s;
 }
-
 string database::hash(string* data)
 {
 
@@ -256,26 +189,96 @@ string database::hash(string* data)
 	std::string hex_str = picosha2::bytes_to_hex_string(hash.begin(), hash.end());
 	return (hex_str);
 }
-
-bool database::createUserBalance(string * email)
-{
-	std::string query = fmt::format("INSERT into balance ('eMail') VALUES ('{0}');", *email);
-	return(executeQuery(&query, noCallback));
-}
-
 bool database::deleteUserBalance(string * email)
 {
 	std::string query = fmt::format("DELETE from balance WHERE eMail = '{0}'; ", *email);
 	return(executeQuery(&query, noCallback));
 }
 
-void UserData::clear(void)
+//Query specific functions
+bool database::executeQuery(string* _query, int(*f)(void*, int, char**, char**), void* data)
 {
-	isValid = false;
-	name = "";
-	surname = "";
-	email = "";
-	password = "";
-	isAdmin = "";
-	lastLogOut = "";
+	char* zErrMsg = 0;
+	int rc = 0;
+	char* sql = nullptr;
+	std::string exec = *_query;
+	const char* query = exec.c_str();
+	rc = sqlite3_exec(db, query, f, data, &zErrMsg);
+
+	if (rc) {
+		return (false);
+	}
+	else {
+
+		return (true);
+	}
 }
+bool database::executeQuery(string* _query, int(*f)(void*, int, char**, char**))
+{
+	char* zErrMsg = 0;
+	int rc = 0;
+	char* sql = nullptr;
+	std::string exec = *_query;
+	const char* query = exec.c_str();
+	rc = sqlite3_exec(db, query, f, 0, &zErrMsg);
+
+	if (rc) {
+
+		return (0);
+	}
+
+	return (1);
+}
+
+//Query specific callback functions
+int database::callbackCheckAllUserDetails(void * dataptr, int argc, char ** argv, char ** azColName)
+{
+	std::vector<string>* store = (std::vector<string>*)dataptr;
+	for (int i = 0; i < argc; i++)
+		store->push_back(argv[i]);
+	return 0;
+}
+int database::callbackToVector(void * dataptr, int argc, char ** argv, char ** azColName)
+{
+	std::vector<string>* store = (std::vector<string>*)dataptr;
+
+	for (int i = 0; i < argc; i++) {
+		store->push_back(argv[i]);
+	}
+	return 0;
+}
+int database::callbackOneString(void * dataptr, int argc, char ** argv, char ** azColName)
+{
+	std::string * data = (std::string*)dataptr;
+	std::string str(argv[0]);
+	data[0] = str;
+
+	return (0);
+}
+int database::callbackUsers(void* dataptr, int argc, char** argv, char** azColName)
+{
+
+	UserData* store = (UserData*)dataptr;
+	store->isValid = true;
+	store->name = argv[1];
+	store->surname = argv[2];
+	store->email = argv[3];
+	store->password = argv[4];
+	store->isAdmin = argv[5];
+	store->lastLogOut = argv[6];
+	return 0;
+}
+int database::noCallback(void* dataptr, int argc, char** argv, char** azColName)
+{
+	int i;
+	for (i = 0; i < argc; i++) {
+		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+	}
+	printf("\n");
+	return 0;
+}
+
+
+
+
+

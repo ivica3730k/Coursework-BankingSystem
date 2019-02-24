@@ -7,8 +7,9 @@ using std::endl;
 int main()
 {
 	database db("database.db"); //create instance of database type db
-	user user(db); //and assign it to user class of user
 	bank bank(db);
+	user user(db,bank); //and assign it to user class of user
+
 	cout << "Welcome to Virtual Currency trading platform!" << endl;
 
 	do {

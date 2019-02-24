@@ -6,7 +6,7 @@ menu::menu(UserData *data, user &_user,bank &_bk)
 {
 	userdata = data;
 	userset = &_user;
-	bk = &_bk;
+	banking = &_bk;
 
 	email = data->email;
 	name = data->name;
@@ -72,6 +72,7 @@ void menu::adminMenu(void)
 
 		case 1:
 			userMenu();
+			return;
 			break;
 		case 2:
 			clear();
@@ -98,16 +99,18 @@ void menu::adminMenu(void)
 			break;
 		case 6:
 			clear();
-			bk->getCurenciesTable();
+			banking->getCurenciesTable();
 			break;
 		case 7:
 			clear();
-			bk->addCurrency();
+			banking->addCurrency();
 			break;
 		}
 		
-		wait();
-		clear();
+		if (choice != 0) {
+			wait();
+			clear();
+		}
 	} while (choice != 0);
 
 	userset->logout(&email);
@@ -117,6 +120,34 @@ void menu::adminMenu(void)
 
 void menu::userMenu(void)
 {
+	int choice = 0;
+	do {
+		clear();
+		std::cout << "1.Display personal information" << std::endl;
+		std::cout << "2.Change password" << std::endl;
+		std::cout << "0.LogOut from system" << std::endl;
+		cout << "\nInput your choice: ";
+		std::cin >> choice;
+		while ((getchar()) != '\n');
+
+		switch (choice) {
+		case 1:
+			clear();
+			userset->checkByeMail(&email);
+			break;
+		case 2:
+			clear();
+			userset->changePass(&email);
+		}
+		
+
+		if (choice != 0) {
+			wait();
+			clear();
+		}
+	} while (choice != 0);
+
+	
 }
 
 void menu::completeData(void)
@@ -185,6 +216,72 @@ void menu::completeData(void)
 	userset->writeAdditionalInfo(&email, data);
 
 	
+}
+
+
+void menu::updateData(void)
+{
+	additionalData data;
+	std::cout << std::endl;
+	cout << "Input your Title, Mr., Mrs., Ms. and Miss: ";
+
+	getline(std::cin, data.title);
+	std::transform(data.title.begin(), data.title.end(), data.title.begin(), ::tolower);
+	data.title[0] = toupper(data.title[0]);
+
+	while (data.title != "Mr" && data.title != "Mrs" && data.title != "Ms" && data.title != "Miss") {
+		cout << "\nWrong input,try again!" << endl;
+		cout << "Input your Title, Mr., Mrs., Ms. and Miss: ";
+
+		getline(std::cin, data.title);
+		std::transform(data.title.begin(), data.title.end(), data.title.begin(), ::tolower);
+		data.title[0] = toupper(data.title[0]);
+	}
+
+	cout << "\nInput your Nationality: ";
+
+	getline(std::cin, data.nationality);
+	std::transform(data.nationality.begin(), data.nationality.end(), data.nationality.begin(), ::tolower);
+	data.nationality[0] = toupper(data.nationality[0]);
+	cout << "\nInput birth date > DAY: ";
+	unsigned int day;
+	cin >> day;
+	while ((getchar()) != '\n');
+
+	while (day > 31 || day < 1) {
+		cout << "\nWrong input,try again (Day must be from 1 to 31)" << endl;
+		cout << "Input birth date > DAY:";
+		cin >> day;
+		while ((getchar()) != '\n');
+	}
+
+	cout << "\nInput birth date > MONTH: ";
+	unsigned int month;
+	cin >> month;
+	while ((getchar()) != '\n');
+
+	while (month > 12 || month < 1) {
+		cout << "\nWrong input,try again (Month must be from 1 to 12)" << endl;
+		cout << "Input birth date > DAY:";
+		cin >> month;
+		while ((getchar()) != '\n');
+	}
+
+	cout << "\nInput birth date > YEAR: ";
+	unsigned int year;
+	cin >> year;
+	while ((getchar()) != '\n');
+
+	data.dateOfBirth = fmt::format("{0}/{1}/{2}", day, month, year);
+	cout << "\nInput place of birth: ";
+	getline(std::cin, data.placeOfBirth);
+	cout << "\nInput your full Address: ";
+	getline(std::cin, data.address);
+	cout << "\nInput full phone number: ";
+	getline(std::cin, data.phonenum);
+	userset->writeAdditionalInfo(&email, data);
+
+
 }
 
 void menu::wait(void)

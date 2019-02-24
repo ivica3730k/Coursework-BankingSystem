@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "user.h"
 
-user::user(database &_db) {
+user::user(database &_db, bank &_bank) {
 	db = &_db;
+	banking = &_bank;
 }
 
 bool user::login(UserData &data) {
@@ -22,6 +23,25 @@ bool user::login(UserData &data) {
 bool user::login(string *email, string *password, UserData &data) {
 	return db->loginUser(email, password, data);
 }
+
+bool user::changePass(string * email)
+{
+	std::cout << "Input old password: ";
+	std::string oldpass;
+	std::getline(std::cin, oldpass);
+	std::cout << "\nInput new password: ";
+	std::string newpass;
+	std::getline(std::cin, newpass);
+
+	bool exec = db->changePassword(email, &oldpass, &newpass);
+	if (exec) {
+		std::cout << "\nPassword changed successfully!" << std::endl;
+		return true;
+	}
+	std::cout << "Error changing password!" << std::endl;
+	return false;
+}
+
 bool user::checkByeMail(void) {
 	std::cout << "Input eMail of the user that you would like to check: ";
 	std::string email = "";
@@ -42,6 +62,7 @@ bool user::checkByeMail(void) {
 	}
 	return false;
 }
+
 bool user::checkByeMail(string *mail) {
 	system("CLS");
 	std::vector<string> data;
@@ -60,6 +81,7 @@ bool user::checkByeMail(string *mail) {
 	std::cout << "User does not exist!" << std::endl;
 	return false;
 }
+
 bool user::writeAdditionalInfo(string *email, additionalData data) {
 	return (db->updateUserDetails(email, data));
 }
@@ -111,21 +133,10 @@ bool user::add(void) {
 	return (db->createUser(&name, &surname, &email, &password, admin));
 }
 
-bool user::add(string *name, string *surname, string *eMail, string *password,
-	bool isAdmin) {
+bool user::add(string *name, string *surname, string *eMail, string *password,bool isAdmin) {
 	string pass = *password;
 	if (pass.length() < 8) return false;
 	return (db->createUser(name, surname, eMail, &pass, isAdmin));
-}
-
-bool user::add(const char *name, const char *surname, const char *eMail,
-	const char *password, bool isAdmin) {
-	string _name(name);
-	string _surname(surname);
-	string _email(eMail);
-	string _password(password);
-	bool Admin = isAdmin;
-	return (db->createUser(&_name, &_surname, &_email, &_password, Admin));
 }
 
 bool user::del(void) {

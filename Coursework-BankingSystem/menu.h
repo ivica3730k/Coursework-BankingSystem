@@ -13,10 +13,11 @@ private:
 	void adminMenu(void);
 	void userMenu(void);
 	void completeData(void);
+	void updateData(void);
 	void wait(void);
 	void clear(void);
 	
-	bank *bk;
+	bank *banking;
 	UserData *userdata;
 	user *userset;
 	std::string name;
