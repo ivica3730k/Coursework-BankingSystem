@@ -8,6 +8,7 @@ int main()
 {
 	database db("database.db"); //create instance of database type db
 	user user(db); //and assign it to user class of user
+	bank bank(db);
 	cout << "Welcome to Virtual Currency trading platform!" << endl;
 
 	do {
@@ -24,7 +25,7 @@ int main()
 		if (choice == 1) {
 			UserData data;
 			if (user.login(data)) {
-				menu menu(&data, user);
+				menu menu(&data, user,bank);
 				menu.display();
 				menu.~menu();
 			}

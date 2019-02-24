@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "user.h"
 
-user::user(database &_db) { db = &_db; }
+user::user(database &_db) {
+	db = &_db;
+}
 
 bool user::login(UserData &data) {
 	std::string email;
@@ -139,6 +141,7 @@ bool user::del(void) {
 	}
 
 	std::cout << "Error deleting user, probably this user does not exist" << endl;
+	return(false);
 }
 
 bool user::del(string *email) {

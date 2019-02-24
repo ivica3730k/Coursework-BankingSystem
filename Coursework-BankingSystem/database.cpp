@@ -18,12 +18,17 @@ bool database::createUser(string* name, string* surname, string* eMail, string* 
 		char* sql = nullptr;
 		std::string _query = fmt::format("INSERT INTO `users`(`name`,`surname`,`eMail`,`password`,`isAdmin`,`lastLogOut`) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');", *(name), *(surname), *(eMail), hash(password), admin, "Never");
 		bool rc = executeQuery(&_query, noCallback);
+		
+	
+		
 		if (rc) {
-			return (false);
+			createUserBalance(eMail);
+			return (true);
 		}
 		else {
-
-			return (true);
+			
+			
+			return (false);
 		}
 	}
 	std::cout << "DATABASE: User probably already exists" << std::endl;
@@ -34,6 +39,7 @@ bool database::deleteUser(string * email)
 {
 	if (checkUser(email).isValid) {
 		string query = fmt::format("DELETE from users where eMail = '{0}';", *email);
+		deleteUserBalance(email);
 		return executeQuery(&query, noCallback);
 	}
 	
@@ -92,7 +98,7 @@ bool database::listAllUsers(std::vector<string> *a)
 {
 	
 	std::string query = "SELECT name ,surname,eMail FROM users;";
-	bool exec = executeQuery(&query, callbackListAllUsers,(void*)a);
+	bool exec = executeQuery(&query, callbackToVector,(void*)a);
 	return exec;
 	
 }
@@ -109,25 +115,28 @@ bool database::checkAllDetails(string * email, std::vector<std::string>* data)
 {
 	if (checkUser(email).isValid) {
 		std::string query = fmt::format("SELECT name,surname,eMail,lastLogOut,title,nationality,dateOfBirth,placeOfBirth,address,phoneNum FROM users where eMail = '{0}';", *email);
-		return(executeQuery(&query, callbackCheckAllUserDetails, (void*)data));
+		return(executeQuery(&query, callbackToVector, (void*)data));
 	}
 	return(false);	
 }
 
-int database::callbackListAllUsers(void* dataptr, int argc, char** argv, char** azColName)
-{
-	std::vector<string>* store = (std::vector<string>*)dataptr;
-	store->push_back(argv[0]);
-	store->push_back(argv[1]);
-	store->push_back(argv[2]);
-	return 0;
-}
+
 
 int database::callbackCheckAllUserDetails(void * dataptr, int argc, char ** argv, char ** azColName)
 {
 	std::vector<string>* store = (std::vector<string>*)dataptr;
 	for (int i = 0; i < argc; i++)
 		store->push_back(argv[i]);
+	return 0;
+}
+
+int database::callbackToVector(void * dataptr, int argc, char ** argv, char ** azColName)
+{
+	std::vector<string>* store = (std::vector<string>*)dataptr;
+
+	for (int i = 0; i < argc; i++) {
+		store->push_back(argv[i]);
+	}
 	return 0;
 }
 
@@ -197,6 +206,39 @@ bool database::setlastLogOut(string* email)
 	return (executeQuery(&query, noCallback));
 }
 
+bool database::checkCurrencies(std::vector <std::string> *currset)
+{
+	
+	std::string query = "SELECT currency,label FROM currencies;";
+	return(executeQuery(&query, callbackToVector, (void*)currset));
+}
+
+bool database::addCurrency(string * name, string * label)
+{
+	std::string testQuery = fmt::format("SELECT *  from currencies where currency = '{0}';", *name);
+
+	std::vector<std::string> currset;
+	checkCurrencies(&currset);
+
+	bool exsist = std::find(currset.begin(), currset.end(), *name) != currset.end();
+
+	if (exsist == false) {
+		std::string query = fmt::format("INSERT into currencies ('currency','label') VALUES ('{0}','{1}');", *name, *label);
+		std::string query2 = fmt::format("ALTER TABLE balance ADD column '{0}' TEXT default 'NULL';", *label);
+		bool exec1 = executeQuery(&query, noCallback);
+		bool exec2 = executeQuery(&query2, noCallback);
+
+		if (exec1 || exec2)
+			return true;
+	}
+
+
+	cout << "This currency already is present in the system" << endl;
+	
+	return false;
+	
+}
+
 string database::returnTime(void)
 {
 	auto end = std::chrono::system_clock::now();
@@ -213,6 +255,18 @@ string database::hash(string* data)
 	picosha2::hash256(src_str.begin(), src_str.end(), hash.begin(), hash.end());
 	std::string hex_str = picosha2::bytes_to_hex_string(hash.begin(), hash.end());
 	return (hex_str);
+}
+
+bool database::createUserBalance(string * email)
+{
+	std::string query = fmt::format("INSERT into balance ('eMail') VALUES ('{0}');", *email);
+	return(executeQuery(&query, noCallback));
+}
+
+bool database::deleteUserBalance(string * email)
+{
+	std::string query = fmt::format("DELETE from balance WHERE eMail = '{0}'; ", *email);
+	return(executeQuery(&query, noCallback));
 }
 
 void UserData::clear(void)

@@ -2,10 +2,11 @@
 #include "menu.h"
 
 
-menu::menu(UserData *data, user &_user)
+menu::menu(UserData *data, user &_user,bank &_bk)
 {
 	userdata = data;
 	userset = &_user;
+	bk = &_bk;
 
 	email = data->email;
 	name = data->name;
@@ -52,13 +53,15 @@ void menu::adminMenu(void)
 	int choice = 0;
 	
 	do{
-		std::cout << std::endl;
+		//std::cout << std::endl;
 		cout << "1.Display user area" << endl;
 		cout << "2.Add user" << endl;
 		cout << "3.Remove user" << endl;
 		cout << "4.List all users" << endl;
 		cout << "5.Check user by eMail" << endl;
-		cout << "0. LogOut from system" << endl;
+		cout << "6.List all currencies on system" << endl;
+		cout << "7.Add currency to system" << endl;
+		cout << "0.LogOut from system" << endl;
 		cout << "\nInput your choice: ";
 		cin >> choice;
 		while ((getchar()) != '\n');
@@ -92,6 +95,14 @@ void menu::adminMenu(void)
 			userset->checkByeMail();
 			//wait();
 			//clear();
+			break;
+		case 6:
+			clear();
+			bk->getCurenciesTable();
+			break;
+		case 7:
+			clear();
+			bk->addCurrency();
 			break;
 		}
 		

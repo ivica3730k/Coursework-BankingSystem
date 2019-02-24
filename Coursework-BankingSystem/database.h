@@ -25,9 +25,12 @@ struct UserData {
 	void clear(void);
 
 };
+
+
 class database
 {
 public:
+	bool createUserBalance(string* email);
 	database(const char *path);
 	bool createUser(string* name, string* surname, string * eMail,string * password,bool isAdmin);
 	bool deleteUser(string* email);
@@ -36,6 +39,9 @@ public:
 	bool updateUserDetails(string* email, additionalData &data);
 	bool checkAllDetails(string* email, std::vector<std::string> *data);
 	bool setlastLogOut(string* email);
+
+	bool checkCurrencies(std::vector <std::string> *currset);
+	bool addCurrency(string* name, string* label);
 	
 private:
 	UserData checkUser(string * email);
@@ -44,12 +50,16 @@ private:
 	bool executeQuery(string * _query, int(*f)(void *, int, char **, char **));
 	string returnTime(void);
 	string hash(string * data);
+	bool deleteUserBalance(string* email);
+
 	
+
+
 	//callbacks
 	static int callbackUsers(void *dataptr, int argc, char **argv, char **azColName);
 	static int noCallback(void *dataptr, int argc, char **argv, char **azColName);
-	static int callbackListAllUsers(void* dataptr, int argc, char** argv, char** azColName);
 	static int callbackCheckAllUserDetails(void* dataptr, int argc, char** argv, char** azColName);
+	static int callbackToVector(void* dataptr, int argc, char** argv, char** azColName);
 
 	
 };

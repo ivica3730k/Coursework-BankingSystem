@@ -3,7 +3,7 @@
 class menu
 {
 public:
-	menu(UserData *data,user &_user);
+	menu(UserData *data,user &_user,bank &_bk);
 	~menu();
 	int display(void);
 
@@ -16,6 +16,7 @@ private:
 	void wait(void);
 	void clear(void);
 	
+	bank *bk;
 	UserData *userdata;
 	user *userset;
 	std::string name;

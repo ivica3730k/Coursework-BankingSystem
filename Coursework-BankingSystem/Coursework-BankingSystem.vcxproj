@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="bank.h" />
     <ClInclude Include="database.h" />
     <ClInclude Include="fmt-master\format.h" />
     <ClInclude Include="menu.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="user.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bank.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="database.cpp" />
     <ClCompile Include="fmt-master\format.cc" />
