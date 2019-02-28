@@ -18,7 +18,7 @@ public:
 	bool login(string* email, string* password,UserData &data);
 	bool changePass(string* email);
 	bool logout(string* email);
-	
+	bool checkBalance(string*email);
 
 	bool checkByeMail(void);
 	bool checkByeMail(string*mail);

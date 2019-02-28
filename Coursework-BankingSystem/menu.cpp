@@ -53,7 +53,7 @@ void menu::adminMenu(void)
 	int choice = 0;
 	
 	do{
-		//std::cout << std::endl;
+
 		cout << "1.Display user area" << endl;
 		cout << "2.Add user" << endl;
 		cout << "3.Remove user" << endl;
@@ -122,9 +122,14 @@ void menu::userMenu(void)
 {
 	int choice = 0;
 	do {
-		clear();
+		
 		std::cout << "1.Display personal information" << std::endl;
 		std::cout << "2.Change password" << std::endl;
+		std::cout << "3.Check personal balance" << std::endl;
+		std::cout << "4.Send virtual currency to other user on platform" << std::endl;
+
+		if (admin)
+			std::cout << "Return to Admin menu!" << std::endl;
 		std::cout << "0.LogOut from system" << std::endl;
 		cout << "\nInput your choice: ";
 		std::cin >> choice;
@@ -138,7 +143,18 @@ void menu::userMenu(void)
 		case 2:
 			clear();
 			userset->changePass(&email);
+			break;
+		case 3:
+			clear();
+			banking->printAllBalance(&email);
+			break;
+
+		case 4:
+			clear();
+			banking->transfer(&email);
+			break;
 		}
+		
 		
 
 		if (choice != 0) {
@@ -293,4 +309,26 @@ void menu::wait(void)
 void menu::clear(void)
 {
 	system("CLS");
+}
+
+bool menu::boolInput(void)
+{
+	std::string input;
+	cout << "Input 'y' for yes and 'n' for no: ";
+	getline(std::cin, input);
+	std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+
+	while (input != "y" && input != "n") {
+		cout << "\nWrong input, try again!";
+		cout << "\nIs user administrator y/n: ";
+		getline(std::cin, input);
+		std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+	}
+	
+	
+
+	if (input == "y") {
+		return(true);
+	}
+	return false;
 }

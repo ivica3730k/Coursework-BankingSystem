@@ -142,7 +142,7 @@ bool database::addCurrency(string * name, string * label)
 
 	if (exsist == false) {
 		std::string query = fmt::format("INSERT into currencies ('currency','label') VALUES ('{0}','{1}');", *name, *label);
-		std::string query2 = fmt::format("ALTER TABLE balance ADD column '{0}' TEXT default 'NULL';", *label);
+		std::string query2 = fmt::format("ALTER TABLE balance ADD column '{0}' REAL default '0';", *label);
 		bool exec1 = executeQuery(&query, noCallback);
 		bool exec2 = executeQuery(&query2, noCallback);
 
@@ -156,6 +156,35 @@ bool database::addCurrency(string * name, string * label)
 	return false;
 
 }
+
+bool database::checkBalance(std::vector<std::string>* balance, string * email)
+{
+	std::string query = fmt::format("SELECT * from balance where eMail = '{0}';", *email);
+	bool exec = executeQuery(&query, callbackToVectorColNames, (void*)balance);
+	
+	if (exec) {
+		balance->erase(balance->begin());
+		balance->erase(balance->begin());
+		return true;
+	}
+	return false;
+}
+
+bool database::checkBalance(std::string * balance, std::string * currency, std::string * email)
+{
+
+	std::string query = fmt::format("SELECT {1} from balance where eMail = '{0}';", *email,*currency);
+	
+	bool exec = executeQuery(&query, callbackOneString, (void*)balance);
+
+	if (exec) {
+		
+		return true;
+	}
+	return false;
+}
+
+
 
 //"Helper" functions
 UserData database::checkUser(string* email)
@@ -193,6 +222,12 @@ bool database::deleteUserBalance(string * email)
 {
 	std::string query = fmt::format("DELETE from balance WHERE eMail = '{0}'; ", *email);
 	return(executeQuery(&query, noCallback));
+}
+
+bool database::setUserBalance(string * email, string * currency, double & balance)
+{
+	std::string query = fmt::format("update balance set {0} = '{1}' where eMail = '{2}';",*currency,balance,*email);
+	return executeQuery(&query, noCallback);
 }
 
 //Query specific functions
@@ -254,6 +289,16 @@ int database::callbackOneString(void * dataptr, int argc, char ** argv, char ** 
 	data[0] = str;
 
 	return (0);
+}
+int database::callbackToVectorColNames(void * dataptr, int argc, char ** argv, char ** azColName)
+{
+	std::vector<string>* store = (std::vector<string>*)dataptr;
+
+	for (int i = 0; i < argc; i++) {
+		store->push_back(azColName[i]);
+		store->push_back(argv[i]);
+	}
+	return 0;
 }
 int database::callbackUsers(void* dataptr, int argc, char** argv, char** azColName)
 {

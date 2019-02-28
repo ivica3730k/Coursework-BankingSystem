@@ -16,6 +16,7 @@ private:
 	void updateData(void);
 	void wait(void);
 	void clear(void);
+	bool boolInput(void);
 	
 	bank *banking;
 	UserData *userdata;

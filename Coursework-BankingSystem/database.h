@@ -22,7 +22,7 @@ struct UserData {
 	string password;
 	string isAdmin;
 	string lastLogOut;
-	void clear(void);
+	
 
 };
 
@@ -44,9 +44,14 @@ public:
 
 	bool checkCurrencies(std::vector <std::string> *currset);
 	bool addCurrency(string* name, string* label);
+	bool checkBalance(std::vector <std::string> *balance,string * email);
+	bool checkBalance(std::string* balance, std::string *currency, std::string*email);
+	bool setUserBalance(string*email, string* currency, double& balance);
+
+	UserData checkUser(string * email);
 	
 private:
-	UserData checkUser(string * email);
+	
 	sqlite3 *db =nullptr;
 	string returnTime(void);
 	string hash(string * data);
@@ -61,6 +66,7 @@ private:
 	static int callbackCheckAllUserDetails(void* dataptr, int argc, char** argv, char** azColName);
 	static int callbackToVector(void* dataptr, int argc, char** argv, char** azColName);
 	static int callbackOneString(void* dataptr, int argc, char** argv, char** azColName);
+	static int callbackToVectorColNames(void* dataptr, int argc, char** argv, char** azColName);
 
 	
 };

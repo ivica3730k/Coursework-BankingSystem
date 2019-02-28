@@ -91,6 +91,7 @@ bool user::logout(string *email) {
 	return true;
 }
 
+
 bool user::add(void) {
 	string name;
 	string surname;
@@ -121,7 +122,8 @@ bool user::add(void) {
 	while (isAdmin != "y" && isAdmin != "n") {
 		cout << "\nWrong input, try again!";
 		cout << "\nIs user administrator y/n: ";
-		getline(std::cin, password);
+		getline(std::cin, isAdmin);
+		std::transform(isAdmin.begin(), isAdmin.end(), isAdmin.begin(), ::tolower);
 	}
 
 	bool admin = false;
