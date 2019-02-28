@@ -127,6 +127,7 @@ void menu::userMenu(void)
 		std::cout << "2.Change password" << std::endl;
 		std::cout << "3.Check personal balance" << std::endl;
 		std::cout << "4.Send virtual currency to other user on platform" << std::endl;
+		std::cout << "5.Export virual currency to a file." << std::endl;
 
 		if (admin)
 			std::cout << "Return to Admin menu!" << std::endl;
@@ -151,7 +152,11 @@ void menu::userMenu(void)
 
 		case 4:
 			clear();
-			banking->transfer(&email);
+			banking->transferBalance(&email);
+			break;
+		case 5:
+			clear();
+			banking->exportBalance(&email);
 			break;
 		}
 		

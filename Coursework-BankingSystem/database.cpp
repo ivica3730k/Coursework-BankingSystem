@@ -202,6 +202,16 @@ UserData database::checkUser(string* email)
 	
 	return dataread;
 }
+unsigned long int database::getLastTransferId(void)
+{
+	std::string query = "SELECT id FROM transfers ORDER BY id DESC LIMIT 1;";
+	std::string data = "";
+	executeQuery(&query, callbackOneString, (void*)&data);
+	if (data == "")
+		return (0);
+
+	return (stoi(data));
+}
 string database::returnTime(void)
 {
 	auto end = std::chrono::system_clock::now();

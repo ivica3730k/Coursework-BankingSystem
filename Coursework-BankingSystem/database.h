@@ -47,13 +47,14 @@ public:
 	bool checkBalance(std::vector <std::string> *balance,string * email);
 	bool checkBalance(std::string* balance, std::string *currency, std::string*email);
 	bool setUserBalance(string*email, string* currency, double& balance);
-
+	string returnTime(void);
 	UserData checkUser(string * email);
+	unsigned long int getLastTransferId(void);
+	bool writeTransfer(string* senderMail, string* createdOn);
 	
 private:
 	
 	sqlite3 *db =nullptr;
-	string returnTime(void);
 	string hash(string * data);
 
 	bool deleteUserBalance(string* email);

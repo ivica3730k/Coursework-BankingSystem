@@ -75,7 +75,7 @@ void bank::printOneBalance(string * email)
 
 }
 
-bool bank::transfer(string* sendermail)
+bool bank::transferBalance(string* sendermail)
 {
 	std::cout << "Available currencies to transfer are:" << std::endl;
 	getCurenciesTable();
@@ -92,14 +92,14 @@ bool bank::transfer(string* sendermail)
 	}
 
 	std::string _ammountToSend;
-	std::cout << "\n"<<fmt::format("Input ammount of {0} you want to send: ",curr);
+	std::cout << "\n"<<fmt::format("Input amount of {0} you want to send: ",curr);
 	std::getline(std::cin, _ammountToSend);
 	double ammountToSend = stod(_ammountToSend);
 	double availableAmmount;
 	getBalance(sendermail, &curr, availableAmmount);
 
 	if (ammountToSend > availableAmmount) {
-		std::cout << "\n" << fmt::format("Ammount that you want to send exceeds your balance.Currently you have {0} {1} on your account,aborting transfer", availableAmmount, curr);
+		std::cout << "\n" << fmt::format("amount that you want to send exceeds your balance.Currently you have {0} {1} on your account,aborting transfer", availableAmmount, curr);
 		return false;
 	}
 
@@ -114,7 +114,7 @@ bool bank::transfer(string* sendermail)
 	std::transform(receiverEmail.begin(), receiverEmail.end(), receiverEmail.begin(), ::tolower);
 
 	if (db->checkUser(&receiverEmail).isValid == false) {
-		std::cout << "\n" << fmt::format("User with email {0} does not exsist on system, aborting transfer", receiverEmail);
+		std::cout << "\n" << fmt::format("User with email {0} does not exsist on system, aborting transfer!", receiverEmail);
 		return false;
 	}
 	
@@ -139,7 +139,7 @@ void bank::printAllBalance(string * email)
 
 	if (exec) {
 
-		VariadicTable < std::string, std::string > vt({ "Currency","Ammount" });
+		VariadicTable < std::string, std::string > vt({ "Currency","amount" });
 		std::vector<string>::iterator j;
 
 		for (j = balance.begin(); j < balance.end(); ++j) {
@@ -198,4 +198,101 @@ bool bank::setBalance(string * email, string * label, double & balance)
 	return exec;
 }
 
+bool bank::exportBalance(string* email) {
 
+
+	std::cout << "Available currencies to export are:" << std::endl;
+	getCurenciesTable();
+	std::vector<std::string> availableCurrencies = getCurencies();
+	std::cout << std::endl;
+	std::cout << "Input currency label you want to export:";
+	std::string curr;
+	std::getline(std::cin, curr);
+	std::transform(curr.begin(), curr.end(), curr.begin(), ::toupper);
+
+	if (std::find(availableCurrencies.begin(), availableCurrencies.end(), curr) != availableCurrencies.end() == false) {
+		std::cout << "\nThis currency is not present on the system, aborting export!" << std::endl;
+		return false;
+	}
+
+	std::string _ammountToSend;
+	std::cout << "\n" << fmt::format("Input amount of {0} you want to send: ", curr);
+	std::getline(std::cin, _ammountToSend);
+	double ammountToSend = stod(_ammountToSend);
+	double availableAmmount;
+	getBalance(email, &curr, availableAmmount);
+
+	if (ammountToSend > availableAmmount) {
+		std::cout << "\n" << fmt::format("amount that you want to send exceeds your balance.Currently you have {0} {1} on your account,aborting export", availableAmmount, curr);
+		return false;
+	}
+
+	if (ammountToSend <= 0) {
+		std::cout << "\nAmmount to send can't be negative number or zero (0),aborting export!" << std::endl;
+		return false;
+	}
+
+	
+
+	double newBalance = availableAmmount - ammountToSend;
+	setBalance(email, &curr, newBalance);
+
+	struct data {
+		std::string senderEmail;
+		std::string createdOn;
+		double amount;
+		
+	};
+
+	data dataToWrite;
+	dataToWrite.senderEmail = *email;
+	dataToWrite.createdOn = db->returnTime();
+	dataToWrite.amount = ammountToSend;
+
+
+	FILE *outfile;
+	std::string filename = fmt::format("transfer_{0}.cur", dataToWrite.senderEmail);
+
+
+	// open file for writing 
+	outfile = fopen(filename.c_str(), "w");
+	if (outfile == NULL)
+	{
+		fprintf(stderr, "\nError opend file\n");
+		
+	}
+
+	fwrite(&dataToWrite, sizeof(struct data), 1, outfile);
+
+	if (fwrite != 0)
+		printf("contents to file written successfully !\n");
+	else
+		printf("error writing file !\n");
+
+	fclose(outfile);
+
+	std::cout << "\nExport completed sucesfully!" << std::endl;
+
+	FILE *infile;
+
+	infile = fopen(filename.c_str(), "r");
+	if (infile == NULL)
+	{
+		fprintf(stderr, "\nError opening file\n");
+	
+	}
+
+	data readData;
+	while (fread(&readData, sizeof(struct data), 1, infile));
+	fclose(infile);
+	//cout << readData.amount << endl;
+
+		
+	
+	
+
+
+
+	return true;
+	
+}

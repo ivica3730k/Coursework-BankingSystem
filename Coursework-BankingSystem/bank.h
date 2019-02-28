@@ -9,7 +9,8 @@ public:
 	std::vector<std::string> getCurenciesTable(void);
 	void printAllBalance(string * email);
 	void printOneBalance(string * email);
-	bool transfer(string* sendermail);
+	bool transferBalance(string* sendermail);
+	bool exportBalance(string* sendermail);
 	bool addCurrency(void);
 
 	
