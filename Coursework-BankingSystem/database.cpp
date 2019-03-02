@@ -212,6 +212,11 @@ unsigned long int database::getLastTransferId(void)
 
 	return (stoi(data));
 }
+bool database::logTransfer(string * senderMail, string * receiver, double amount,string* currency)
+{
+	std::string query = fmt::format("INSERT INTO transfers ('senderEmail','receiver','amount','currency','claimed','createdOn') VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');", *senderMail, *receiver, amount, *currency, "Yes",returnTime());
+	return(executeQuery(&query, noCallback));
+}
 string database::returnTime(void)
 {
 	auto end = std::chrono::system_clock::now();

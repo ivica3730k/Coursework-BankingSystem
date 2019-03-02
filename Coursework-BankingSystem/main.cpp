@@ -9,8 +9,7 @@ int main()
 	database db("database.db"); //create instance of database type db
 	bank bank(db);
 	user user(db,bank); //and assign it to user class of user
-	cout << db.getLastTransferId();
-	return (0);
+
 	cout << "Welcome to Virtual Currency trading platform!" << endl;
 
 	do {

@@ -50,8 +50,10 @@ public:
 	string returnTime(void);
 	UserData checkUser(string * email);
 	unsigned long int getLastTransferId(void);
-	bool writeTransfer(string* senderMail, string* createdOn);
-	
+	bool logTransfer(string* senderMail,string* receiver,double amount, string* currency);
+
+
+
 private:
 	
 	sqlite3 *db =nullptr;

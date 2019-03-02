@@ -71,6 +71,7 @@ void menu::adminMenu(void)
 		switch (choice) {
 
 		case 1:
+			clear();
 			userMenu();
 			return;
 			break;

@@ -126,6 +126,7 @@ bool bank::transferBalance(string* sendermail)
 	receiverAmmount += ammountToSend;
 	setBalance(&receiverEmail, &curr, receiverAmmount);
 
+	db->logTransfer(sendermail, &receiverEmail, ammountToSend, &curr);
 	std::cout << "\nTransfer completed sucesfully!" << std::endl;
 	return true;
 
@@ -199,13 +200,13 @@ bool bank::setBalance(string * email, string * label, double & balance)
 }
 
 bool bank::exportBalance(string* email) {
-
+	
 
 	std::cout << "Available currencies to export are:" << std::endl;
 	getCurenciesTable();
 	std::vector<std::string> availableCurrencies = getCurencies();
 	std::cout << std::endl;
-	std::cout << "Input currency label you want to export:";
+	std::cout << "Input currency label you want to export: ";
 	std::string curr;
 	std::getline(std::cin, curr);
 	std::transform(curr.begin(), curr.end(), curr.begin(), ::toupper);
@@ -223,7 +224,7 @@ bool bank::exportBalance(string* email) {
 	getBalance(email, &curr, availableAmmount);
 
 	if (ammountToSend > availableAmmount) {
-		std::cout << "\n" << fmt::format("amount that you want to send exceeds your balance.Currently you have {0} {1} on your account,aborting export", availableAmmount, curr);
+		std::cout << "\n" << fmt::format("Amount that you want to send exceeds your balance.Currently you have {0} {1} on your account,aborting export!", availableAmmount, curr);
 		return false;
 	}
 
@@ -232,67 +233,35 @@ bool bank::exportBalance(string* email) {
 		return false;
 	}
 
-	
+	unsigned long int transferId = db->getLastTransferId();
+	transferId++;
 
-	double newBalance = availableAmmount - ammountToSend;
-	setBalance(email, &curr, newBalance);
-
-	struct data {
-		std::string senderEmail;
-		std::string createdOn;
-		double amount;
-		
-	};
-
-	data dataToWrite;
-	dataToWrite.senderEmail = *email;
-	dataToWrite.createdOn = db->returnTime();
-	dataToWrite.amount = ammountToSend;
+	std::string filename = fmt::format("TRANSFER_{0}.trf",transferId);
 
 
-	FILE *outfile;
-	std::string filename = fmt::format("transfer_{0}.cur", dataToWrite.senderEmail);
-
-
-	// open file for writing 
+	FILE * outfile;
+	//std::cout << filename << endl;
 	outfile = fopen(filename.c_str(), "w");
 	if (outfile == NULL)
 	{
-		fprintf(stderr, "\nError opend file\n");
-		
-	}
-
-	fwrite(&dataToWrite, sizeof(struct data), 1, outfile);
-
-	if (fwrite != 0)
-		printf("contents to file written successfully !\n");
-	else
-		printf("error writing file !\n");
-
-	fclose(outfile);
-
-	std::cout << "\nExport completed sucesfully!" << std::endl;
-
-	FILE *infile;
-
-	infile = fopen(filename.c_str(), "r");
-	if (infile == NULL)
-	{
 		fprintf(stderr, "\nError opening file\n");
-	
+		return false;
 	}
 
-	data readData;
-	while (fread(&readData, sizeof(struct data), 1, infile));
-	fclose(infile);
-	//cout << readData.amount << endl;
+	fwrite(&transferId, sizeof(transferId), 1, outfile);
 
-		
+	if (fwrite == 0) {
+		printf("error writing file !\n");
+		return false;
+	}
+
+
+	double newBalance = availableAmmount - ammountToSend;
+	db->logTransfer(email, &filename, ammountToSend, &curr);
+	setBalance(email, &curr, newBalance);
+	std::cout << "Transfer to file " << filename << " succesfully done!" << std::endl;
+
 	
-	
-
-
-
 	return true;
 	
 }
