@@ -299,12 +299,22 @@ bool bank::imoportBalance(string * receiverEmail)
 		std::cout << "\nError while importing file. Aborting import!" << std::endl;
 		return false;
 	}
+
+	bool exec3 = db->setClaimed(transferid);
+	if (exec3 == false) {
+		std::cout << "\nError while importing file. Aborting import!" << std::endl;
+		return false;
+	}
+
 	exsistingBalance += bal.amount;
 	bool exec2 = setBalance(receiverEmail, &bal.currency, exsistingBalance);
 	if (exec2 == false) {
 		std::cout << "\nError while importing file. Aborting import!" << std::endl;
 		return false;
 	}
+
+
+
 
 	std::cout << "Import succesfull, here are the details!:" << std::endl;
 	std::cout << std::endl;
