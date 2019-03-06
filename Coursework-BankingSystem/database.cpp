@@ -217,6 +217,29 @@ bool database::logTransfer(string * senderMail, string * receiver, double amount
 	std::string query = fmt::format("INSERT INTO transfers ('senderEmail','receiver','amount','currency','claimed','createdOn') VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');", *senderMail, *receiver, amount, *currency, "Yes",returnTime());
 	return(executeQuery(&query, noCallback));
 }
+bool database::logExportTransfer(string * senderMail, string * receiver, double amount, string * currency)
+{
+	std::string query = fmt::format("INSERT INTO transfers ('senderEmail','receiver','amount','currency','claimed','createdOn') VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');", *senderMail, *receiver, amount, *currency, "No", returnTime());
+	return(executeQuery(&query, noCallback));
+}
+bool database::readExportLog(unsigned long int id, importBalance & data)
+{
+	std::string query = fmt::format("SELECT * FROM transfers where id = {0};", id);
+	std::vector <std::string> cache;
+	bool exec = executeQuery(&query, callbackToVector, (void*)&cache);
+	if (exec) {
+
+		data.id = atol(cache[0].c_str());
+		data.senderEmail = cache[1];
+		data.receiver = cache[2];
+		data.amount = atof(cache[3].c_str());
+		data.currency = cache[4];
+		data.createdOn = cache[5];
+		data.claimed = cache[6];
+		return true;
+	}
+	return false;
+}
 string database::returnTime(void)
 {
 	auto end = std::chrono::system_clock::now();

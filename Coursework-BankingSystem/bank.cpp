@@ -257,7 +257,7 @@ bool bank::exportBalance(string* email) {
 
 
 	double newBalance = availableAmmount - ammountToSend;
-	db->logTransfer(email, &filename, ammountToSend, &curr);
+	db->logExportTransfer(email, &filename, ammountToSend, &curr);
 	setBalance(email, &curr, newBalance);
 	std::cout << "Transfer to file " << filename << " succesfully done!" << std::endl;
 

@@ -3,6 +3,16 @@
 #include "sqlite3.h"
 using std::string;
 
+struct importBalance {
+	unsigned long int id;
+	std::string senderEmail;
+	std::string receiver;
+	double amount;
+	std::string currency;
+	std::string createdOn;
+	std::string claimed;
+
+};
 
 struct additionalData {
 	string title;
@@ -51,6 +61,9 @@ public:
 	UserData checkUser(string * email);
 	unsigned long int getLastTransferId(void);
 	bool logTransfer(string* senderMail,string* receiver,double amount, string* currency);
+	bool logExportTransfer(string* senderMail, string* receiver, double amount, string* currency);
+	bool readExportLog(unsigned long int id, importBalance & data);
+
 
 
 
