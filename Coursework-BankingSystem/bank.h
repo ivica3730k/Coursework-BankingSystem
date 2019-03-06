@@ -11,6 +11,7 @@ public:
 	void printOneBalance(string * email);
 	bool transferBalance(string* sendermail);
 	bool exportBalance(string* sendermail);
+	bool imoportBalance(string *receiverEmail);
 	bool addCurrency(void);
 
 	

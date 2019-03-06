@@ -214,7 +214,7 @@ unsigned long int database::getLastTransferId(void)
 }
 bool database::logTransfer(string * senderMail, string * receiver, double amount,string* currency)
 {
-	std::string query = fmt::format("INSERT INTO transfers ('senderEmail','receiver','amount','currency','claimed','createdOn') VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');", *senderMail, *receiver, amount, *currency, "Yes",returnTime());
+	std::string query = fmt::format("INSERT INTO transfers ('senderEmail','receiver','amount','currency','claimed','createdOn') VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');", *senderMail, *receiver, amount, *currency, "No",returnTime());
 	return(executeQuery(&query, noCallback));
 }
 bool database::logExportTransfer(string * senderMail, string * receiver, double amount, string * currency)
@@ -222,7 +222,7 @@ bool database::logExportTransfer(string * senderMail, string * receiver, double 
 	std::string query = fmt::format("INSERT INTO transfers ('senderEmail','receiver','amount','currency','claimed','createdOn') VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');", *senderMail, *receiver, amount, *currency, "No", returnTime());
 	return(executeQuery(&query, noCallback));
 }
-bool database::readExportLog(unsigned long int id, importBalance & data)
+bool database::readExportLog(unsigned long int id, balance & data)
 {
 	std::string query = fmt::format("SELECT * FROM transfers where id = {0};", id);
 	std::vector <std::string> cache;
@@ -239,6 +239,11 @@ bool database::readExportLog(unsigned long int id, importBalance & data)
 		return true;
 	}
 	return false;
+}
+bool database::setClaimed(unsigned long int transferId)
+{
+	std::string query = fmt::format("UPDATE transfers SET claimed ='Yes' where id = '{0}';", transferId);
+	return executeQuery(&query, noCallback);
 }
 string database::returnTime(void)
 {

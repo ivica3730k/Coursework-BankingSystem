@@ -265,3 +265,55 @@ bool bank::exportBalance(string* email) {
 	return true;
 	
 }
+
+bool bank::imoportBalance(string * receiverEmail)
+{
+	std::cout << "Input name of the file you want to import balance from: ";
+	std::string filename;
+	std::getline(std::cin, filename);
+
+
+	FILE * infile;
+	//std::cout << filename << endl;
+	infile = fopen(filename.c_str(), "r");
+	if (infile == NULL)
+	{
+		fprintf(stderr, "\nError opening file\n");
+		return false;
+	}
+
+	unsigned long int transferid;
+	while (fread(&transferid, sizeof(transferid), 1, infile))
+	fclose(infile);
+
+	balance bal;
+	db->readExportLog(transferid, bal);
+	if (bal.claimed == "Yes") {
+		std::cout << fmt::format("\nFile {0} has already been claimed! Aborting import!", filename) << std::endl;
+		return false;
+	}
+	
+	double exsistingBalance;
+	bool exec = getBalance(receiverEmail, &bal.currency, exsistingBalance);
+	if (exec == false) {
+		std::cout << "\nError while importing file. Aborting import!" << std::endl;
+		return false;
+	}
+	exsistingBalance += bal.amount;
+	bool exec2 = setBalance(receiverEmail, &bal.currency, exsistingBalance);
+	if (exec2 == false) {
+		std::cout << "\nError while importing file. Aborting import!" << std::endl;
+		return false;
+	}
+
+	std::cout << "Import succesfull, here are the details!:" << std::endl;
+	std::cout << std::endl;
+	std::cout << "Imported ammount: " << bal.amount << " " << bal.currency << std::endl;
+	std::cout << "Sender eMail: " << bal.senderEmail << std::endl;
+	std::cout << "Exported on: " << bal.createdOn << std::endl;
+	std::cout << std::endl;
+	std::cout << "New balance: " << exsistingBalance << " " << bal.currency << std::endl;
+
+
+	return false;
+}

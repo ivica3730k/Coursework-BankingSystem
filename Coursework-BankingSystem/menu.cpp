@@ -128,10 +128,10 @@ void menu::userMenu(void)
 		std::cout << "2.Change password" << std::endl;
 		std::cout << "3.Check personal balance" << std::endl;
 		std::cout << "4.Send virtual currency to other user on platform" << std::endl;
-		std::cout << "5.Export virual currency to a file." << std::endl;
-
+		std::cout << "5.Export virual currency to a file" << std::endl;
+		std::cout << "6.Import virtual currency from a file" << std::endl;
 		if (admin)
-			std::cout << "Return to Admin menu!" << std::endl;
+			//std::cout << "Return to Admin menu!" << std::endl;
 		std::cout << "0.LogOut from system" << std::endl;
 		cout << "\nInput your choice: ";
 		std::cin >> choice;
@@ -158,6 +158,10 @@ void menu::userMenu(void)
 		case 5:
 			clear();
 			banking->exportBalance(&email);
+			break;
+		case 6:
+			clear();
+			banking->imoportBalance(&email);
 			break;
 		}
 		
