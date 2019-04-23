@@ -62,19 +62,23 @@ bool database::loginUser(string* email, string* password, UserData &_data)
 
 		if (data.password == hash(password)) {
 
-			if (data.lastLogOut != "Never")
-
+			if (data.lastLogOut != "Never") {
+				system("CLS");
 				std::cout << "DATABASE: Login Succesfull" << std::endl;
+				
+			}
 			cout << "Last Logout " << data.lastLogOut << endl;
 			return (true);
 		}
 		else {
+			system("CLS");
 			std::cout << "DATABASE: Wrong password" << std::endl;
 			return (false);
 		}
 	}
 
 	else {
+		system("CLS");
 		std::cout << "DATABASE: User with this eMail address does not exist in database!" << std::endl;
 		return (false);
 	}
