@@ -2,12 +2,11 @@
 #include "menu.h"
 
 
-menu::menu(UserData *data, user &_user,bank &_bk)
+menu::menu(UserData *data, user &_user, bank &_bk)
 {
 	userdata = data;
 	userset = &_user;
 	banking = &_bk;
-
 	email = data->email;
 	name = data->name;
 	surname = data->surname;
@@ -37,11 +36,11 @@ int menu::display(void)
 	}
 
 	if (admin) {
-		
+
 		adminMenu();
 	}
-	else{
-		
+	else {
+
 		userMenu();
 	}
 
@@ -51,8 +50,8 @@ int menu::display(void)
 void menu::adminMenu(void)
 {
 	int choice = 0;
-	
-	do{
+
+	do {
 
 		cout << "1.Display user area" << endl;
 		cout << "2.Add user" << endl;
@@ -63,10 +62,16 @@ void menu::adminMenu(void)
 		cout << "7.Add currency to system" << endl;
 		cout << "0.LogOut from system" << endl;
 		cout << "\nInput your choice: ";
-		cin >> choice;
-		while ((getchar()) != '\n');
 
-		
+		cin >> choice;
+		while (std::cin.fail()) {
+			std::cout << "Wrong input,input number only!" << std::endl;
+			std::cin.clear();
+			std::cin.ignore(256, '\n');
+			cout << "\nInput your choice: ";
+			cin >> choice;
+		}
+		while ((getchar()) != '\n');
 
 		switch (choice) {
 
@@ -94,6 +99,7 @@ void menu::adminMenu(void)
 			break;
 		case 5:
 			clear();
+			userset->listAll();
 			userset->checkByeMail();
 			//wait();
 			//clear();
@@ -106,24 +112,32 @@ void menu::adminMenu(void)
 			clear();
 			banking->addCurrency();
 			break;
-		}
-		
-		if (choice != 0) {
-			wait();
+		case 0:
+			break;
+		default:
 			clear();
+			std::cout << "Choice is not available, try again!" << std::endl;
+			adminMenu();
+			break;
 		}
+
+
+
+		wait();
+		clear();
+
 	} while (choice != 0);
 
 	userset->logout(&email);
 	system("CLS");
-	
+
 }
 
 void menu::userMenu(void)
 {
 	int choice = 0;
 	do {
-		
+
 		std::cout << "1.Display personal information" << std::endl;
 		std::cout << "2.Change password" << std::endl;
 		std::cout << "3.Check personal balance" << std::endl;
@@ -131,10 +145,17 @@ void menu::userMenu(void)
 		std::cout << "5.Export virual currency to a file" << std::endl;
 		std::cout << "6.Import virtual currency from a file" << std::endl;
 		if (admin)
-			//std::cout << "Return to Admin menu!" << std::endl;
+			std::cout << "7.Return to Admin menu!" << std::endl;
 		std::cout << "0.LogOut from system" << std::endl;
 		cout << "\nInput your choice: ";
-		std::cin >> choice;
+		cin >> choice;
+		while (std::cin.fail()) {
+			std::cout << "Wrong input,input number only!" << std::endl;
+			std::cin.clear();
+			std::cin.ignore(256, '\n');
+			cout << "\nInput your choice: ";
+			cin >> choice;
+		}
 		while ((getchar()) != '\n');
 
 		switch (choice) {
@@ -163,17 +184,33 @@ void menu::userMenu(void)
 			clear();
 			banking->imoportBalance(&email);
 			break;
-		}
-		
-		
-
-		if (choice != 0) {
-			wait();
+		case 7:
 			clear();
+			if (admin == true)
+				adminMenu();
+			else {
+				clear();
+				std::cout << "Choice is not available, try again!" << std::endl;
+				userMenu();
+			}
+			break;
+		case 0:
+			break;
+		default:
+			clear();
+			std::cout << "Choice is not available, try again!" << std::endl;
+			userMenu();
+			break;
 		}
+
+
+		wait();
+		clear();
+
 	} while (choice != 0);
 
-	
+	userset->logout(&email);
+	system("CLS");
 }
 
 void menu::completeData(void)
@@ -241,7 +278,7 @@ void menu::completeData(void)
 	getline(std::cin, data.phonenum);
 	userset->writeAdditionalInfo(&email, data);
 
-	
+
 }
 
 
@@ -334,8 +371,6 @@ bool menu::boolInput(void)
 		getline(std::cin, input);
 		std::transform(input.begin(), input.end(), input.begin(), ::tolower);
 	}
-	
-	
 
 	if (input == "y") {
 		return(true);

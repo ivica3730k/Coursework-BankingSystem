@@ -12,6 +12,7 @@ bool database::createUser(string* name, string* surname, string* eMail, string* 
 	if (isAdmin)
 		admin = "Yes";
 	bool exists = checkUser(eMail).isValid;
+
 	if (exists == false) {
 		char* zErrMsg = 0;
 		char* sql = nullptr;
@@ -62,19 +63,23 @@ bool database::loginUser(string* email, string* password, UserData &_data)
 
 		if (data.password == hash(password)) {
 
-			if (data.lastLogOut != "Never")
-
+			if (data.lastLogOut != "Never") {
+				system("CLS");
 				std::cout << "DATABASE: Login Succesfull" << std::endl;
+				
+			}
 			cout << "Last Logout " << data.lastLogOut << endl;
 			return (true);
 		}
 		else {
+			system("CLS");
 			std::cout << "DATABASE: Wrong password" << std::endl;
 			return (false);
 		}
 	}
 
 	else {
+		system("CLS");
 		std::cout << "DATABASE: User with this eMail address does not exist in database!" << std::endl;
 		return (false);
 	}

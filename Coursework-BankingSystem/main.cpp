@@ -9,6 +9,7 @@ int main()
 	database db("database.db"); //create instance of database type db
 	bank bank(db);
 	user user(db,bank); //and assign it to user class of 
+	
 	cout << "Welcome to Virtual Currency trading platform!" << endl;
 
 	do {
@@ -19,6 +20,14 @@ int main()
 		cout << "\nPlease input your choice: ";
 		int choice = INT_MAX;
 		cin >> choice;
+
+		while (std::cin.fail()) {
+			std::cout << "Wrong input,input number only!" << std::endl;
+			std::cin.clear();
+			std::cin.ignore(256, '\n');
+			cout << "\nInput your choice: ";
+			cin >> choice;
+		}
 		while ((getchar()) != '\n');
 		cout << endl;
 
